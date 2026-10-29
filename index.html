@@ -7,7 +7,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -19,6 +19,7 @@
               sans: ['"Plus Jakarta Sans"', 'sans-serif'],
               serif: ['Newsreader', 'serif'],
               mono: ['"JetBrains Mono"', 'monospace'],
+              signature: ['"Caveat"', '"Dancing Script"', 'cursive'],
             },
             colors: {
               midnight: {
@@ -69,6 +70,23 @@
       }
       .paper-shadow-warm {
         box-shadow: 0 20px 40px -15px rgba(60, 45, 30, 0.15), 0 0 0 1px rgba(60, 45, 30, 0.08);
+      }
+      @media print {
+        header, .no-print, button, .wizard-controls {
+          display: none !important;
+        }
+        body {
+          background: white !important;
+          color: black !important;
+        }
+        .print-document {
+          box-shadow: none !important;
+          border: none !important;
+          max-width: 100% !important;
+          width: 100% !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
       }
     </style>
   </head>

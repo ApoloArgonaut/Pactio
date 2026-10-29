@@ -327,7 +327,21 @@ export const useContractStore = create<ContractStoreState>((set, get) => {
 
     updatePayments: (patch) => {
       set((state) => {
-        const nextPayments = { ...state.payments, ...patch };
+        let nextPayments = { ...state.payments, ...patch };
+        // Si se actualiza el monto total, recalcular los montos de los hitos según su porcentaje
+        if (patch.totalAmountCents !== undefined && nextPayments.milestones.length > 0) {
+          const total = patch.totalAmountCents;
+          let remaining = total;
+          const updatedMilestones = nextPayments.milestones.map((m, idx) => {
+            if (idx === nextPayments.milestones.length - 1) {
+              return { ...m, amountCents: remaining };
+            }
+            const part = Math.round((total * m.percentage) / 100);
+            remaining -= part;
+            return { ...m, amountCents: part };
+          });
+          nextPayments = { ...nextPayments, milestones: updatedMilestones };
+        }
         const nextState = { ...state, payments: nextPayments };
         return {
           payments: nextPayments,
