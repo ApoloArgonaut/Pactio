@@ -1,0 +1,353 @@
+{
+  "$schema": "https://tokens.studio/schemas/token-engine-schema.json",
+  "name": "Pactio Design System Tokens",
+  "version": "2.0.0",
+  "description": "Design tokens oficiales para Pactio, optimizados para Tokens Studio en Figma, Tailwind CSS y WCAG 2.1 AAA. Incluye temas Midnight Slate, Warm Paper y High-Contrast.",
+  "global": {
+    "fontFamilies": {
+      "ui": {
+        "value": "Plus Jakarta Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif",
+        "type": "fontFamilies",
+        "description": "Tipografía principal de interfaz, optimizada para legibilidad tabular en cifras y fechas"
+      },
+      "editorial": {
+        "value": "Source Serif Pro, Newsreader, Georgia, serif",
+        "type": "fontFamilies",
+        "description": "Tipografía editorial para la hoja contractual, transmite solemnidad y rigor jurídico"
+      },
+      "mono": {
+        "value": "JetBrains Mono, SF Mono, Menlo, Consolas, monospace",
+        "type": "fontFamilies",
+        "description": "Tipografía monoespaciada para hashes SHA-256, códigos NanoID y sellos criptográficos"
+      },
+      "dyslexic": {
+        "value": "OpenDyslexic, sans-serif",
+        "type": "fontFamilies",
+        "description": "Tipografía inclusiva alternativa para usuarios con dislexia o debilidad visual"
+      }
+    },
+    "fontSizes": {
+      "2xs": { "value": "10px", "type": "fontSizes", "description": "Metadatos y leyendas criptográficas diminutas" },
+      "xs": { "value": "12px", "type": "fontSizes", "description": "Badges, timestamps y tooltips secundarios" },
+      "sm": { "value": "14px", "type": "fontSizes", "description": "Microcopia, labels de formularios y tablas secundarias" },
+      "base": { "value": "16px", "type": "fontSizes", "description": "Cuerpo de texto base (1rem) y cláusulas en lectura móvil" },
+      "md": { "value": "18px", "type": "fontSizes", "description": "Cuerpo de lectura descansada para la hoja legal A4 desktop" },
+      "lg": { "value": "20px", "type": "fontSizes", "description": "Subtítulos de módulos y montos destacados" },
+      "xl": { "value": "24px", "type": "fontSizes", "description": "Títulos de pasos y encabezados de sección" },
+      "2xl": { "value": "30px", "type": "fontSizes", "description": "Títulos principales de carátula ejecutiva" },
+      "3xl": { "value": "36px", "type": "fontSizes", "description": "Importes financieros principales de alto impacto" },
+      "4xl": { "value": "48px", "type": "fontSizes", "description": "Display numérico de métricas y balance total" }
+    },
+    "fontWeights": {
+      "regular": { "value": "400", "type": "fontWeights" },
+      "medium": { "value": "500", "type": "fontWeights" },
+      "semibold": { "value": "600", "type": "fontWeights" },
+      "bold": { "value": "700", "type": "fontWeights" },
+      "extrabold": { "value": "800", "type": "fontWeights" }
+    },
+    "lineHeights": {
+      "none": { "value": "1", "type": "lineHeights" },
+      "tight": { "value": "1.25", "type": "lineHeights" },
+      "snug": { "value": "1.375", "type": "lineHeights" },
+      "normal": { "value": "1.5", "type": "lineHeights" },
+      "relaxed": { "value": "1.65", "type": "lineHeights", "description": "Altura óptima para lectura legal descansada" },
+      "loose": { "value": "1.8", "type": "lineHeights" }
+    },
+    "letterSpacing": {
+      "tighter": { "value": "-0.05em", "type": "letterSpacing" },
+      "tight": { "value": "-0.025em", "type": "letterSpacing" },
+      "normal": { "value": "0em", "type": "letterSpacing" },
+      "wide": { "value": "0.025em", "type": "letterSpacing" },
+      "wider": { "value": "0.05em", "type": "letterSpacing" },
+      "widest": { "value": "0.1em", "type": "letterSpacing", "description": "Para códigos NanoID y hashes espaciados" }
+    },
+    "spacing": {
+      "0": { "value": "0px", "type": "spacing" },
+      "0-5": { "value": "2px", "type": "spacing" },
+      "1": { "value": "4px", "type": "spacing" },
+      "1-5": { "value": "6px", "type": "spacing" },
+      "2": { "value": "8px", "type": "spacing" },
+      "3": { "value": "12px", "type": "spacing" },
+      "4": { "value": "16px", "type": "spacing" },
+      "5": { "value": "20px", "type": "spacing" },
+      "6": { "value": "24px", "type": "spacing" },
+      "8": { "value": "32px", "type": "spacing" },
+      "10": { "value": "40px", "type": "spacing" },
+      "12": { "value": "48px", "type": "spacing", "description": "Altura mínima táctil recomendada WCAG" },
+      "14": { "value": "56px", "type": "spacing" },
+      "16": { "value": "64px", "type": "spacing" },
+      "20": { "value": "80px", "type": "spacing" },
+      "24": { "value": "96px", "type": "spacing" },
+      "32": { "value": "128px", "type": "spacing" }
+    },
+    "borderRadius": {
+      "none": { "value": "0px", "type": "borderRadius" },
+      "xs": { "value": "2px", "type": "borderRadius" },
+      "sm": { "value": "4px", "type": "borderRadius" },
+      "md": { "value": "8px", "type": "borderRadius", "description": "Radio estándar para inputs, cards e iconos" },
+      "lg": { "value": "12px", "type": "borderRadius", "description": "Radio para modales, carátulas y drawers" },
+      "xl": { "value": "16px", "type": "borderRadius", "description": "Radio para paneles maestros y cards flotantes" },
+      "2xl": { "value": "24px", "type": "borderRadius", "description": "Radio para esquinas de bottom sheets móviles" },
+      "full": { "value": "9999px", "type": "borderRadius", "description": "Píldoras y badges de estado" }
+    },
+    "borderWidth": {
+      "0": { "value": "0px", "type": "borderWidth" },
+      "1": { "value": "1px", "type": "borderWidth" },
+      "2": { "value": "2px", "type": "borderWidth" },
+      "3": { "value": "3px", "type": "borderWidth", "description": "Ancho de Focus Ring WCAG AAA" },
+      "4": { "value": "4px", "type": "borderWidth" }
+    },
+    "breakpoints": {
+      "mobile": { "value": "320px", "type": "dimension" },
+      "tablet": { "value": "768px", "type": "dimension" },
+      "laptop": { "value": "1024px", "type": "dimension" },
+      "desktop": { "value": "1280px", "type": "dimension" },
+      "ultrawide": { "value": "1440px", "type": "dimension" },
+      "4k": { "value": "1920px", "type": "dimension" }
+    },
+    "layout": {
+      "a4Width": { "value": "780px", "type": "dimension", "description": "Ancho geométrico óptimo para render de hoja A4 en pantalla" },
+      "a4MinHeight": { "value": "1100px", "type": "dimension", "description": "Alto geométrico proporcional a hoja A4/Carta" },
+      "readingMaxWidth": { "value": "640px", "type": "dimension", "description": "Máximo ancho de línea de lectura (75 caracteres)" },
+      "drawerWidth": { "value": "480px", "type": "dimension", "description": "Ancho estándar del drawer lateral de redlining en desktop" },
+      "bottomDockHeight": { "value": "64px", "type": "dimension", "description": "Altura del dock móvil permanente en pantalla baja" },
+      "touchTargetMin": { "value": "48px", "type": "dimension", "description": "Objetivo de pulsación táctil mínima" }
+    }
+  },
+  "themes": {
+    "midnight-slate": {
+      "color": {
+        "canvas": {
+          "base": { "value": "#0B1120", "type": "color", "description": "Fondo profundo de la aplicación (Midnight Navy)" },
+          "surface": { "value": "#0F172A", "type": "color", "description": "Superficie de paneles de control (Slate 900)" },
+          "subtle": { "value": "#1E293B", "type": "color", "description": "Superficie secundaria y cards internas (Slate 800)" },
+          "elevated": { "value": "#334155", "type": "color", "description": "Superficie flotante de drawers y tooltips (Slate 700)" },
+          "muted": { "value": "#475569", "type": "color", "description": "Fondos de chips inactivos y bordes sutiles" }
+        },
+        "paper": {
+          "sheet": { "value": "#FFFFFF", "type": "color", "description": "Hoja física de contrato (Blanco nítido alto contraste)" },
+          "surface": { "value": "#F8FAFC", "type": "color", "description": "Fondo del visor de documento (Slate 50)" },
+          "border": { "value": "#E2E8F0", "type": "color", "description": "Borde perimetral de la hoja A4" },
+          "textPrimary": { "value": "#0F172A", "type": "color", "description": "Texto principal del contrato impreso (15.8:1 AAA)" },
+          "textSecondary": { "value": "#475569", "type": "color", "description": "Texto legal secundario y notas al pie" }
+        },
+        "text": {
+          "primary": { "value": "#F8FAFC", "type": "color", "description": "Texto principal de UI (Slate 50 - 14.2:1 AAA)" },
+          "secondary": { "value": "#94A3B8", "type": "color", "description": "Texto secundario de UI (Slate 400 - 7.4:1 AAA)" },
+          "tertiary": { "value": "#64748B", "type": "color", "description": "Placeholders y metadatos de auditoría" },
+          "inverse": { "value": "#0F172A", "type": "color", "description": "Texto sobre fondos blancos o botones primarios" }
+        },
+        "brand": {
+          "primary": { "value": "#2563EB", "type": "color", "description": "Azul Cobalto Corporativo (Acción principal)" },
+          "hover": { "value": "#1D4ED8", "type": "color", "description": "Cobalto hover" },
+          "active": { "value": "#1E40AF", "type": "color", "description": "Cobalto presionado" },
+          "subtle": { "value": "#1E293B", "type": "color", "description": "Fondo con acento cobalto transparente" },
+          "focusRing": { "value": "#3B82F6", "type": "color", "description": "Anillo de foco accesible 3px" }
+        },
+        "status": {
+          "success": { "value": "#059669", "type": "color", "description": "Verde Esmeralda - Firmado y NOM-151 aprobado" },
+          "successSubtle": { "value": "rgba(5, 150, 105, 0.15)", "type": "color", "description": "Fondo de badge firmado" },
+          "warning": { "value": "#D97706", "type": "color", "description": "Ámbar - Esperando firma / Vence pronto" },
+          "warningSubtle": { "value": "rgba(217, 119, 6, 0.15)", "type": "color", "description": "Fondo de badge pendiente" },
+          "error": { "value": "#DC2626", "type": "color", "description": "Rojo Rubí - Desajuste de hash o error de validación" },
+          "errorSubtle": { "value": "rgba(220, 38, 38, 0.15)", "type": "color", "description": "Fondo de alerta de error" },
+          "info": { "value": "#0284C7", "type": "color", "description": "Cian - Notificaciones informativas de estado" },
+          "infoSubtle": { "value": "rgba(2, 132, 199, 0.15)", "type": "color", "description": "Fondo de notificaciones" }
+        },
+        "diff": {
+          "addition": { "value": "#10B981", "type": "color", "description": "Verde - Texto o término propuesto en v1.1" },
+          "additionBg": { "value": "rgba(16, 185, 129, 0.18)", "type": "color", "description": "Resaltado verde de propuesta" },
+          "deletion": { "value": "#EF4444", "type": "color", "description": "Rojo - Texto o término sustituido de v1.0" },
+          "deletionBg": { "value": "rgba(239, 68, 68, 0.18)", "type": "color", "description": "Resaltado rojo tachado" }
+        },
+        "border": {
+          "subtle": { "value": "#1E293B", "type": "color" },
+          "default": { "value": "#334155", "type": "color" },
+          "strong": { "value": "#475569", "type": "color" },
+          "focus": { "value": "#3B82F6", "type": "color" }
+        }
+      },
+      "boxShadow": {
+        "paperResting": {
+          "value": "0 2px 4px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.35)",
+          "type": "boxShadow",
+          "description": "Sombra física de la hoja sobre lienzo oscuro"
+        },
+        "paperActive": {
+          "value": "0 0 0 2px #3B82F6, 0 12px 36px rgba(0, 0, 0, 0.45)",
+          "type": "boxShadow",
+          "description": "Halo azul cuando el cursor edita activamente la hoja"
+        },
+        "drawer": {
+          "value": "-8px 0 32px rgba(0, 0, 0, 0.6)",
+          "type": "boxShadow",
+          "description": "Sombra de elevación del drawer lateral"
+        },
+        "modal": {
+          "value": "0 24px 60px rgba(0, 0, 0, 0.75)",
+          "type": "boxShadow",
+          "description": "Sombra modal de firma biométrica"
+        },
+        "tooltip": {
+          "value": "0 8px 20px rgba(0, 0, 0, 0.5)",
+          "type": "boxShadow"
+        }
+      }
+    },
+    "warm-paper": {
+      "color": {
+        "canvas": {
+          "base": { "value": "#F5EFE6", "type": "color", "description": "Lienzo cálido tipo libro impreso (E-ink comfort)" },
+          "surface": { "value": "#FAF8F5", "type": "color", "description": "Superficie de paneles (Paper 50)" },
+          "subtle": { "value": "#EFE9DF", "type": "color", "description": "Superficie de cards y toolbars (Paper 100)" },
+          "elevated": { "value": "#FFFFFF", "type": "color", "description": "Superficie blanca flotante" },
+          "muted": { "value": "#E5DCCE", "type": "color", "description": "Fondo de controles inactivos" }
+        },
+        "paper": {
+          "sheet": { "value": "#FCFAF7", "type": "color", "description": "Hoja de contrato con sutil calidez marfil" },
+          "surface": { "value": "#F0EAE1", "type": "color", "description": "Mesa de fondo donde reposa la hoja" },
+          "border": { "value": "#E2D8C9", "type": "color", "description": "Borde editorial suave de la hoja" },
+          "textPrimary": { "value": "#1C1917", "type": "color", "description": "Tinta carbón cálida (Stone 900 - 16.1:1 AAA)" },
+          "textSecondary": { "value": "#44403C", "type": "color", "description": "Tinta sepia atenuada (Stone 700 - 8.8:1 AAA)" }
+        },
+        "text": {
+          "primary": { "value": "#1C1917", "type": "color", "description": "Texto principal de UI (Stone 900)" },
+          "secondary": { "value": "#57534E", "type": "color", "description": "Texto secundario de UI (Stone 600)" },
+          "tertiary": { "value": "#78716C", "type": "color", "description": "Etiquetas y metadatos complementarios" },
+          "inverse": { "value": "#FAF8F5", "type": "color", "description": "Texto sobre fondos oscuros o botones café" }
+        },
+        "brand": {
+          "primary": { "value": "#8C5835", "type": "color", "description": "Cuero Cálido Artesanal (Enfoque editorial)" },
+          "hover": { "value": "#744525", "type": "color", "description": "Cuero hover" },
+          "active": { "value": "#5D351B", "type": "color", "description": "Cuero presionado" },
+          "subtle": { "value": "#F5EADB", "type": "color", "description": "Fondo ámbar sutil para selección" },
+          "focusRing": { "value": "#8C5835", "type": "color", "description": "Anillo de foco en tono cuero accesible" }
+        },
+        "status": {
+          "success": { "value": "#2E6247", "type": "color", "description": "Verde Bosque Profundo - Validez legal" },
+          "successSubtle": { "value": "rgba(46, 98, 71, 0.12)", "type": "color" },
+          "warning": { "value": "#B45309", "type": "color", "description": "Ocre quemado - Advertencia amigable" },
+          "warningSubtle": { "value": "rgba(180, 83, 9, 0.12)", "type": "color" },
+          "error": { "value": "#B91C1C", "type": "color", "description": "Borgoña - Error o discrepancia" },
+          "errorSubtle": { "value": "rgba(185, 28, 28, 0.12)", "type": "color" },
+          "info": { "value": "#0369A1", "type": "color", "description": "Azul Ultramar - Ayuda contextual" },
+          "infoSubtle": { "value": "rgba(3, 105, 161, 0.12)", "type": "color" }
+        },
+        "diff": {
+          "addition": { "value": "#2E6247", "type": "color" },
+          "additionBg": { "value": "rgba(46, 98, 71, 0.16)", "type": "color" },
+          "deletion": { "value": "#B91C1C", "type": "color" },
+          "deletionBg": { "value": "rgba(185, 28, 28, 0.16)", "type": "color" }
+        },
+        "border": {
+          "subtle": { "value": "#EFE9DF", "type": "color" },
+          "default": { "value": "#D8CFBF", "type": "color" },
+          "strong": { "value": "#A89E8D", "type": "color" },
+          "focus": { "value": "#8C5835", "type": "color" }
+        }
+      },
+      "boxShadow": {
+        "paperResting": {
+          "value": "0 2px 8px rgba(44, 40, 37, 0.08), 0 12px 28px rgba(44, 40, 37, 0.06)",
+          "type": "boxShadow",
+          "description": "Sombra orgánica sobre superficie marfil"
+        },
+        "paperActive": {
+          "value": "0 0 0 2px #8C5835, 0 16px 36px rgba(44, 40, 37, 0.12)",
+          "type": "boxShadow"
+        },
+        "drawer": {
+          "value": "-8px 0 24px rgba(44, 40, 37, 0.15)",
+          "type": "boxShadow"
+        },
+        "modal": {
+          "value": "0 20px 48px rgba(44, 40, 37, 0.2)",
+          "type": "boxShadow"
+        },
+        "tooltip": {
+          "value": "0 6px 16px rgba(44, 40, 37, 0.1)",
+          "type": "boxShadow"
+        }
+      }
+    },
+    "high-contrast": {
+      "color": {
+        "canvas": {
+          "base": { "value": "#000000", "type": "color", "description": "Negro puro absoluto (Zero glare)" },
+          "surface": { "value": "#000000", "type": "color", "description": "Superficie de paneles en negro puro" },
+          "subtle": { "value": "#121212", "type": "color", "description": "Contenedores con borde blanco de 2px" },
+          "elevated": { "value": "#1A1A1A", "type": "color", "description": "Superficie elevada con borde 2px" },
+          "muted": { "value": "#262626", "type": "color" }
+        },
+        "paper": {
+          "sheet": { "value": "#FFFFFF", "type": "color", "description": "Blanco puro absoluto (21:1 Ratio)" },
+          "surface": { "value": "#000000", "type": "color", "description": "Contorno negro para máxima delimitación" },
+          "border": { "value": "#000000", "type": "color", "description": "Borde perimetral sólido de 3px" },
+          "textPrimary": { "value": "#000000", "type": "color", "description": "Texto negro absoluto (21:1 AAA)" },
+          "textSecondary": { "value": "#000000", "type": "color", "description": "Negro absoluto para evitar degradados" }
+        },
+        "text": {
+          "primary": { "value": "#FFFFFF", "type": "color", "description": "Texto blanco puro (21:1 AAA)" },
+          "secondary": { "value": "#FFFF00", "type": "color", "description": "Amarillo canario para etiquetas de alto contraste (19.5:1)" },
+          "tertiary": { "value": "#00FFFF", "type": "color", "description": "Cian para enlaces y datos secundarios (16.8:1)" },
+          "inverse": { "value": "#000000", "type": "color", "description": "Texto negro sobre botones amarillos/blancos" }
+        },
+        "brand": {
+          "primary": { "value": "#FFD700", "type": "color", "description": "Oro de alta visibilidad (Cyber Gold)" },
+          "hover": { "value": "#FFE44D", "type": "color" },
+          "active": { "value": "#E6C200", "type": "color" },
+          "subtle": { "value": "#1A1800", "type": "color" },
+          "focusRing": { "value": "#00FFFF", "type": "color", "description": "Cian ultra visible para contorno de foco de 3px" }
+        },
+        "status": {
+          "success": { "value": "#00FF66", "type": "color", "description": "Verde Neón accesible con símbolo explícito [✓]" },
+          "successSubtle": { "value": "#002B11", "type": "color" },
+          "warning": { "value": "#FFAA00", "type": "color", "description": "Naranja brillante con símbolo explícito [!]" },
+          "warningSubtle": { "value": "#332200", "type": "color" },
+          "error": { "value": "#FF3333", "type": "color", "description": "Rojo brillante con símbolo explícito [✕]" },
+          "errorSubtle": { "value": "#330000", "type": "color" },
+          "info": { "value": "#33CCFF", "type": "color", "description": "Azul eléctrico con símbolo explícito [i]" },
+          "infoSubtle": { "value": "#002233", "type": "color" }
+        },
+        "diff": {
+          "addition": { "value": "#00FF66", "type": "color" },
+          "additionBg": { "value": "#003314", "type": "color" },
+          "deletion": { "value": "#FF3333", "type": "color" },
+          "deletionBg": { "value": "#330000", "type": "color" }
+        },
+        "border": {
+          "subtle": { "value": "#FFFFFF", "type": "color", "description": "Borde blanco de 1px mínimo" },
+          "default": { "value": "#FFFFFF", "type": "color", "description": "Borde blanco de 2px sólido" },
+          "strong": { "value": "#FFD700", "type": "color", "description": "Borde amarillo de 3px para énfasis" },
+          "focus": { "value": "#00FFFF", "type": "color", "description": "Borde de foco cian de 3px" }
+        }
+      },
+      "boxShadow": {
+        "paperResting": {
+          "value": "0 0 0 3px #FFFFFF",
+          "type": "boxShadow",
+          "description": "Sin blur difuso: reemplazado por contorno perimetral sólido blanco de 3px"
+        },
+        "paperActive": {
+          "value": "0 0 0 4px #00FFFF",
+          "type": "boxShadow",
+          "description": "Contorno sólido cian de 4px al enfocar la hoja"
+        },
+        "drawer": {
+          "value": "0 0 0 3px #FFD700",
+          "type": "boxShadow",
+          "description": "Borde perimetral dorado visible para drawer"
+        },
+        "modal": {
+          "value": "0 0 0 4px #FFFFFF",
+          "type": "boxShadow",
+          "description": "Borde perimetral blanco para modales"
+        },
+        "tooltip": {
+          "value": "0 0 0 2px #00FFFF",
+          "type": "boxShadow"
+        }
+      }
+    }
+  }
+}
