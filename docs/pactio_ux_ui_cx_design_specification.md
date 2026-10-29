@@ -370,8 +370,25 @@ flowchart LR
 
 #### Componente: Canvas de Firma Biométrica y e.firma SAT (`SignatureHub`)
 * **Pestaña 1: Trazo en Pantalla**: Captura vectorial `(x, y, timestamp, velocity)` para peritaje caligráfico.
-* **Pestaña 2: Nombre Tipográfico**: Genera rúbrica legal basada en texto ingresado con aceptación explícita.
+* **Pestaña 2: Nombre Tipográfico**: Genera rúbrica legal caligráfica realista basada en tipografía cursive script (`Caveat` / `Dancing Script`) vinculada al Art. 89 del Código de Comercio.
 * **Pestaña 3: e.firma (FIEL del SAT)**: Carga de `.cer` y `.key` con descifrado **100% en el navegador vía WebCrypto** (cero transmisión de llaves privadas a servidores de Pactio).
+
+---
+
+### 3.3. Mitigación de Renderizado Chromium y Coherencia Cromática de UI (v2.1)
+
+#### 1. Arquitectura de Desplegables Nativos (`<select>`) Anti-Inversión de Contraste
+En navegadores basados en Blink (Google Chrome, Microsoft Edge, Brave) sobre sistemas operativos con modo oscuro activo (Windows 11 / Linux GNOME), los elementos nativos `<select>` frecuentemente delegan el renderizado de la ventana emergente al gestor del SO sin heredar los estilos Tailwind. Esto producía un bug crítico de legibilidad: **texto blanco sobre fondo gris claro o blanco**.
+
+**Solución de Ingeniería UI en Pactio:**
+* **`color-scheme` Dinámico:** Inyección inline y mediante atributo global `data-theme` de la propiedad CSS `color-scheme: dark` (en temas Midnight y Contrast) y `color-scheme: light` (en tema Warm Paper).
+* **Sobreescritura Explícita de `<option>`:** Asignación forzada de `background-color` y `color` con selectores `[&>option]:bg-...` e inline-styles para anular la paleta del compositor nativo del sistema.
+* **Resultado:** Contraste tipográfico perfecto (100% legible) en los 6 menús desplegables del sistema (Moneda EUR/USD/MXN, Vigencia de NDA, Rondas de Revisión, Aceptación Tácita, Kill Fee y Resolución de Controversias).
+
+#### 2. Barra Superior y Backdrops Adaptativos
+* **Header Tematizado:** La barra de navegación superior sincroniza fondo y bordes al tema activo: marfil cálido (`#FAF8F5`) con bordes arena en Warm Paper, y negro con bordes amarillos en High-Contrast AAA, eliminando el corte abrupto de barras oscuras sobre lienzos claros.
+* **Fondo de Previsualización Split-Pane:** El panel derecho de previsualización documental utiliza una textura de fondo cálida en modo Warm Paper (`#E8DFD3`/60) que resalta la hoja membretada como un pliego de papel real sobre un escritorio físico.
+* **Navegación Unificada con Botón Inicio:** El logotipo de Pactio y un botón dedicado en el selector de vistas permiten al usuario alternar sin fricción entre la Landing Page de bienvenida, el Editor Split-Pane del Creador, el Simulador del Cliente y la Bóveda de Contratos.
 
 ---
 

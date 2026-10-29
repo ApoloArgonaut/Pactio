@@ -409,6 +409,42 @@ La seguridad de Pactio fue modelada rigurosamente para prevenir intrusiones y ma
 
 ---
 
+### 5.5. Arquitectura Financiera, Propiedad Intelectual y Renderizado Multi-Plataforma (v2.1)
+
+#### 5.5.1. Multi-Divisa y Balanceador Dinámico de Hitos
+Pactio opera con soporte integral para tres divisas contractuales clave: **Pesos Mexicanos (`MXN`)**, **Dólares Americanos (`USD`)** y **Euros (`EUR`)**.
+* **Gestión de Hitos Dinámicos:** El creador puede seleccionar modelos estándar (50/50 Anticipo y Finiquito, 30/40/30 Hitos de Desarrollo, 100% Anticipo Express) o estructurar hitos personalizados ilimitados.
+* **Algoritmo de Auto-Equilibrio a 100%:** Un botón interactivo de un solo clic ejecuta una distribución equitativa de porcentajes con resolución de residuos en el último hito, asegurando que `sum(percentage) === 100` y garantizando consistencia matemática y jurídica para auditorías tributarias.
+
+#### 5.5.2. Marco Quíntuple de Propiedad Intelectual bajo la LFDA
+Pactio sustituye las cláusulas genéricas anglosajonas de *"Work for Hire"* (nulas en el derecho civil mexicano) por 5 cláusulas modulares estrictamente apegadas a la Ley Federal del Derecho de Autor:
+1. **Reserva de Dominio Definitiva (Art. 83 LFDA):** La cesión patrimonial está condicionada a la liquidación íntegra del 100% del precio pactado.
+2. **Retención de Background IP del Creador:** El profesional retiene sus plantillas, frameworks base, fuentes y librerías preexistentes.
+3. **Derechos Morales Irrenunciables (Art. 21 LFDA):** Reconocimiento inalienable y perpetuo de autoría original.
+4. **Derecho de Exhibición en Portafolio:** Autorización explícita para exhibición del caso de estudio en web, Behance y LinkedIn.
+5. **Acuerdo Bilateral de Confidencialidad (NDA):** Protección de secretos comerciales con vigencia configurable (1, 2, 3 o 5 años).
+
+#### 5.5.3. Gobernanza, Resolución de Controversias y Jurisdicción Parametrizable
+* **Rondas de Ajustes (1 a 4 rondas):** Acotan el alcance y erradican el *"scope creep"*.
+* **Aprobación Tácita (3 a 10 días hábiles):** Previene la parálisis por falta de respuesta del cliente (*"el que calla otorga"*).
+* **Kill Fee de Salida Limpia (30%, 50%, 70%):** Indemnización pre-pactada ante cancelación unilateral sin causa justificada.
+* **Modelo Tripartito de Disputas:** Selección entre Negociación Amistosa Bilateral (30 días), Arbitraje Comercial Privado (CAM) o Tribunales Mercantiles Ordinarios, con ciudad y estado sede editables.
+
+#### 5.5.4. Mitigación de Incompatibilidades Visuales en Blink/DirectWrite
+Para solventar el error clásico de Chromium en Windows y Linux (donde menús desplegables nativos `<select>` renderizan texto blanco sobre fondo gris claro), Pactio implementa una arquitectura híbrida:
+* Inyección de `color-scheme: dark` / `color-scheme: light` dinámico mediante CSS inline y estilos de alto nivel vinculados al atributo `data-theme`.
+* Declaraciones CSS explícitas de color de fondo y fuente en elementos `<option>` para neutralizar sobreescrituras del compositor del sistema operativo anfitrión.
+* Coherencia cromática integral del navbar superior, áreas de texto, paneles laterales y popovers en los tres temas oficiales: **Midnight**, **Warm Paper** y **High-Contrast WCAG AAA**.
+
+#### 5.5.5. Auditor Criptográfico SHA-256 en Vivo
+En el pie de página de la hoja documental canónica, el usuario dispone de un popover de inspección en tiempo real que exhibe:
+* El *digest* completo de 64 caracteres hexadecimales recalculado reactivamente en cada cambio.
+* Constancia de normalización Unicode NFC y saltos de línea Unix LF (ISO/IEC 10646).
+* Trazabilidad de estampa de tiempo CENAM Stratum-1 UTC.
+* Garantía de cero colisiones y no repudio legal.
+
+---
+
 ## 6. BÓVEDA DE CONTRATOS, MONITOREO DE VIGENCIA Y CLONACIÓN ATÓMICA
 
 ### 6.1. Patrón Soft-Delete para Preservación de Evidencias

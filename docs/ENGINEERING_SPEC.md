@@ -160,11 +160,12 @@ export const PartySchema = z.object({
 });
 ```
 
-### 3.2. `MilestoneSchema` y `PaymentPlanSchema`: Invariantes en Centavos Enteros
+### 3.2. `MilestoneSchema` y `PaymentPlanSchema`: Invariantes en Centavos Enteros y Multi-Divisa (MXN / USD / EUR)
 
 > [!IMPORTANT]
 > **Regla Crítica de Integridad Financiera:**  
-> Queda estrictamente prohibido almacenar importes monetarios en variables de tipo coma flotante (*floating-point IEEE 754*). Todos los importes en Pactio se procesan y almacenan en **centavos enteros** (`amountCents`). Por ejemplo, \$30,000.00 MXN se representa como `3000000`.
+> Queda estrictamente prohibido almacenar importes monetarios en variables de tipo coma flotante (*floating-point IEEE 754*). Todos los importes en Pactio se procesan y almacenan en **centavos enteros** (`amountCents`). Por ejemplo, \$30,000.00 MXN o €4,500.00 EUR se representan como enteros no negativos.
+> Además, se implementa soporte formal para divisas: `currency: z.enum(['MXN', 'USD', 'EUR'])`.
 
 El validador de Zod aplica dos *refinements* matemáticos obligatorios:
 $$\sum_{i=1}^n \text{percentage}_i = 100\% \quad \text{y} \quad \sum_{i=1}^n \text{amountCents}_i = \text{totalAmountCents}$$
@@ -182,23 +183,32 @@ export const MilestoneSchema = z.object({
   daysAfterTrigger: z.number().int().nonnegative().optional(),
   status: MilestoneStatusSchema.default('pending')
 });
+
+export const PaymentPlanSchema = z.object({
+  currency: z.enum(['MXN', 'USD', 'EUR']).default('MXN'),
+  totalAmountCents: z.number().int().positive(),
+  milestones: z.array(MilestoneSchema).min(1).max(10)
+});
 ```
 
 ### 3.3. `ScopeSchema`, `IntellectualPropertySchema` y `GovernanceSchema`
 
 Estructurados para reflejar los 5 módulos metodológicos de Pactio:
 1. **Alcance e Insumos (`ScopeSchema`):**  
-   - `requiredClientInputs`: Condición suspensiva contractual; los plazos de entrega no arrancan hasta que el cliente proporcione accesos y manuales.
+   - `requiredClientInputs`: Condición suspensiva contractual; los plazos de entrega no arrancan hasta que el cliente proporcione accesos y credenciales.
    - `outOfScope`: Lista explícita que neutraliza el *scope creep* (ej. no incluye compra de tipografías o servidores).
-2. **Propiedad Intelectual (`IntellectualPropertySchema`):**  
+2. **Propiedad Intelectual Quíntuple (`IntellectualPropertySchema`):**  
    - `transferTiming: 'upon_final_payment'`: **Regla de Oro con Candado**. La traslación de dominio patrimonial (LFDA Art. 83) opera única y exclusivamente tras el pago íntegro del 100%.
-   - `moralRightsRetention: true`: Los derechos morales de autor son inalienables e irrenunciables en la legislación mexicana.
-   - `creatorPortfolioRights: true`: Autorización para exhibición en portafolio y redes sociales.
+   - `retainCreatorBackgroundIP: true`: El creador retiene la propiedad de sus librerías, plantillas base, fuentes y frameworks preexistentes.
+   - `moralRightsRetention: true`: Los derechos morales de autor son inalienables, perpetuos e irrenunciables en la legislación mexicana (LFDA Art. 21).
+   - `creatorPortfolioRights: true`: Autorización explícita para exhibición en portafolio profesional, redes y presentaciones comerciales.
+   - `confidentialityDurationYears: 1 | 2 | 3 | 5`: Acuerdo Bilateral de Confidencialidad (NDA) con vigencia formal parametrizable.
 3. **Gobernanza y Salida Limpia (`GovernanceSchema`):**  
-   - `includedRevisionRounds: 2`: Límite claro de revisiones incluidas.
-   - `additionalRevisionFeeCents: 150000`: Costo por ronda adicional (\$1,500.00 MXN).
-   - `tacitApprovalWindowDays: 5`: "El que calla otorga"; preclusión y aceptación ficta tras 5 días hábiles.
-   - `killFeePercentage: 50`: Retención del anticipo y cobro del trabajo en progreso en cancelaciones intempestivas.
+   - `includedRevisionRounds: 1 | 2 | 3 | 4`: Límite claro de revisiones incluidas (default: 2 rondas).
+   - `tacitApprovalWindowDays: 3 | 5 | 7 | 10`: "El que calla otorga"; preclusión y aceptación ficta tras días hábiles (default: 5 días).
+   - `killFeePercentage: 30 | 50 | 70`: Retención del anticipo y cobro del trabajo en progreso ante cancelación unilateral (default: 50%).
+   - `disputeResolutionMethod`: Elección entre Negociación Amistosa (30 días), Arbitraje Comercial Privado (CAM) o Tribunales Mercantiles Ordinarios.
+   - `jurisdiction`: `{ city: string, state: string }` para validez procesal e interpretación judicial.
 
 ### 3.4. `AuditTrailSchema`: Encadenamiento Criptográfico (Hash Chaining)
 
