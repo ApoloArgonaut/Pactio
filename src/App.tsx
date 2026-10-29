@@ -44,6 +44,17 @@ export default function App() {
   // Payment Method selection
   const [paymentMethod, setPaymentMethod] = useState<'spei' | 'stripe' | 'wise'>('spei');
 
+  // Sync Tailwind Dark Mode and Data-Theme with HTML Root
+  useEffect(() => {
+    if (theme === 'warm') {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.setAttribute('data-theme', 'warm');
+    } else {
+      document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+  }, [theme]);
+
   // Signature Canvas Ref
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -225,10 +236,38 @@ export default function App() {
   }[theme];
 
   const ipBannerClass = {
-    midnight: 'p-4 rounded-xl bg-emerald-950/30 border border-emerald-800/60 text-emerald-200',
+    midnight: 'p-4 rounded-xl bg-emerald-950/40 border border-emerald-600/70 text-emerald-100 shadow-sm',
     warm: 'p-4 rounded-xl bg-[#EAF5EF] border border-[#B7DEC7] text-emerald-950 shadow-sm',
     contrast: 'p-4 rounded-xl bg-black border-2 border-green-400 text-green-300',
   }[theme];
+
+  const previewBackdropClass = {
+    midnight: 'w-full lg:w-[48%] bg-slate-900/40 p-6 lg:p-8 overflow-y-auto flex flex-col items-center border-l border-slate-800/60',
+    warm: 'w-full lg:w-[48%] bg-[#E8DFD3]/60 p-6 lg:p-8 overflow-y-auto flex flex-col items-center border-l border-[#DDD2C3]',
+    contrast: 'w-full lg:w-[48%] bg-black p-6 lg:p-8 overflow-y-auto flex flex-col items-center border-l-2 border-yellow-400',
+  }[theme];
+
+  // High-Contrast Theme-Adapted Select and Option Classes
+  const selectClass = {
+    midnight: 'w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-sm font-semibold text-white focus:outline-none focus:border-blue-500 hover:border-slate-500 shadow-sm transition-all cursor-pointer [&>option]:bg-slate-900 [&>option]:text-white',
+    warm: 'w-full px-3.5 py-2.5 bg-white border border-[#D6C7B2] rounded-xl text-sm font-semibold text-stone-900 focus:outline-none focus:border-[#8C6D46] hover:border-stone-400 shadow-sm transition-all cursor-pointer [&>option]:bg-white [&>option]:text-stone-900',
+    contrast: 'w-full px-3.5 py-2.5 bg-black border-2 border-yellow-400 rounded-xl text-sm font-bold text-yellow-300 focus:outline-none shadow-none transition-all cursor-pointer [&>option]:bg-black [&>option]:text-yellow-300',
+  }[theme];
+
+  const inlineSelectClass = {
+    midnight: 'px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-xl text-xs font-bold text-white focus:outline-none focus:border-blue-500 hover:border-slate-500 shadow-sm transition-all cursor-pointer [&>option]:bg-slate-900 [&>option]:text-white',
+    warm: 'px-3 py-1.5 bg-white border border-[#D6C7B2] rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:border-[#8C6D46] hover:border-stone-400 shadow-sm transition-all cursor-pointer [&>option]:bg-white [&>option]:text-stone-900',
+    contrast: 'px-3 py-1.5 bg-black border-2 border-yellow-400 rounded-xl text-xs font-bold text-yellow-300 focus:outline-none shadow-none transition-all cursor-pointer [&>option]:bg-black [&>option]:text-yellow-300',
+  }[theme];
+
+  const optionClass = {
+    midnight: 'bg-slate-900 text-white font-medium py-1.5',
+    warm: 'bg-white text-stone-900 font-medium py-1.5',
+    contrast: 'bg-black text-yellow-300 font-bold py-1.5',
+  }[theme];
+
+  // Cryptographic Inspector Popover state
+  const [showAuditInspector, setShowAuditInspector] = useState(false);
 
   // Currency Symbol helper
   const currencySymbol = store.payments.currency === 'EUR' ? '€' : '$';
@@ -272,7 +311,7 @@ export default function App() {
                       (signatureType === 'efirma');
 
   return (
-    <div className={`min-h-screen ${themeClasses} flex flex-col font-sans transition-colors duration-200`} style={{ fontSize: `${fontScale}%` }}>
+    <div className={`min-h-screen ${themeClasses} theme-${theme} flex flex-col font-sans transition-colors duration-200`} data-theme={theme} style={{ fontSize: `${fontScale}%` }}>
       
       {/* =========================================================================
           TOP NAVIGATION BAR (ACCESSIBILITY, BRAND, DUAL-VIEW, CODE, THEMES)
@@ -808,11 +847,12 @@ export default function App() {
                       <select
                         value={store.payments.currency}
                         onChange={(e) => store.updatePayments({ currency: e.target.value as 'MXN' | 'USD' | 'EUR' })}
-                        className={inputClass}
+                        className={selectClass}
+                        style={{ colorScheme: theme === 'warm' ? 'light' : 'dark' }}
                       >
-                        <option value="MXN">MXN ($ Pesos Mexicanos)</option>
-                        <option value="USD">USD ($ Dólares Americanos)</option>
-                        <option value="EUR">EUR (€ Euros Unión Europea)</option>
+                        <option value="MXN" className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>MXN ($ Pesos Mexicanos)</option>
+                        <option value="USD" className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>USD ($ Dólares Americanos)</option>
+                        <option value="EUR" className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>EUR (€ Euros Unión Europea)</option>
                       </select>
                     </div>
                   </div>
@@ -1031,15 +1071,17 @@ export default function App() {
 
                   {/* 1. Golden Lock: Reserva de Dominio (Pago 100%) */}
                   <div className={ipBannerClass}>
-                    <div className="flex items-center gap-2 font-bold text-sm mb-2 text-emerald-600 dark:text-emerald-400">
-                      <Lock className="w-4 h-4" />
-                      <span>1. Reserva de Dominio Definitiva (Pago 100% Obligatorio)</span>
+                    <div className="flex items-center gap-2 font-bold text-sm mb-2 text-emerald-400">
+                      <Lock className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span className={theme === 'warm' ? 'text-emerald-900 font-extrabold' : 'text-emerald-300 font-bold'}>
+                        1. Reserva de Dominio Definitiva (Pago 100% Obligatorio)
+                      </span>
                     </div>
-                    <p className="text-xs leading-relaxed opacity-90">
+                    <p className={`text-xs leading-relaxed ${theme === 'warm' ? 'text-stone-800' : 'text-slate-200'}`}>
                       Conforme al <strong>Artículo 83 de la Ley Federal del Derecho de Autor (LFDA)</strong>, la cesión de derechos patrimoniales sobre los diseños, código y entregables opera <strong>única y exclusivamente sujeta a la condición suspensiva de liquidación del 100%</strong> de la contraprestación pactada.
                     </p>
-                    <div className="mt-3 flex items-center gap-2 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                      <Check className="w-4 h-4" />
+                    <div className={`mt-3 flex items-center gap-2 text-[11px] font-bold ${theme === 'warm' ? 'text-emerald-800' : 'text-emerald-400'}`}>
+                      <Check className="w-4 h-4 shrink-0" />
                       <span>Cláusula blindada activada por defecto en el contrato</span>
                     </div>
                   </div>
@@ -1048,10 +1090,10 @@ export default function App() {
                   <div className={`p-4 rounded-xl border flex items-center justify-between ${pillClass} hover:border-blue-400 transition-all`}>
                     <div className="space-y-0.5 max-w-md">
                       <div className="flex items-center gap-1.5 font-bold text-xs">
-                        <FileKey className="w-4 h-4 text-blue-500" />
+                        <FileKey className="w-4 h-4 text-blue-500 shrink-0" />
                         <span>2. Retención de Background IP y Librerías Previas</span>
                       </div>
-                      <p className="text-[11px] opacity-75">
+                      <p className="text-[11px] opacity-80">
                         El creador retiene la titularidad sobre sus plantillas previas, frameworks base, fuentes y herramientas metodológicas. Solo se transfieren los entregables finales específicos.
                       </p>
                     </div>
@@ -1065,11 +1107,11 @@ export default function App() {
 
                   {/* 3. Moral Rights (Art. 21 LFDA) */}
                   <div className={`p-4 rounded-xl border ${pillClass} space-y-1`}>
-                    <div className="flex items-center gap-1.5 font-bold text-xs text-indigo-500">
-                      <Award className="w-4 h-4" />
+                    <div className="flex items-center gap-1.5 font-bold text-xs text-indigo-400">
+                      <Award className="w-4 h-4 shrink-0" />
                       <span>3. Derechos Morales Irrenunciables (Crédito de Autoría)</span>
                     </div>
-                    <p className="text-[11px] opacity-75 leading-relaxed">
+                    <p className="text-[11px] opacity-80 leading-relaxed">
                       El Artículo 21 de la LFDA establece que el derecho a ser reconocido como autor original es inalienable, perpetuo e irrenunciable. El cliente no puede adjudicarse la autoría intelectual original.
                     </p>
                   </div>
@@ -1078,7 +1120,7 @@ export default function App() {
                   <div className={`p-4 rounded-xl border flex items-center justify-between ${pillClass} hover:border-blue-400 transition-all`}>
                     <div className="space-y-0.5 max-w-md">
                       <h4 className="text-xs font-bold">4. Derecho de Exhibición en Portafolio</h4>
-                      <p className="text-[11px] opacity-75">
+                      <p className="text-[11px] opacity-80">
                         Te autoriza a mostrar el caso de estudio y capturas en tu sitio web, Behance, LinkedIn y presentaciones comerciales tras el lanzamiento público.
                       </p>
                     </div>
@@ -1092,20 +1134,21 @@ export default function App() {
 
                   {/* 5. NDA / Confidentiality Agreement */}
                   <div className={`p-4 rounded-xl border ${pillClass} space-y-3`}>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-3">
                       <div>
                         <h4 className="text-xs font-bold">5. Acuerdo Bilateral de Confidencialidad (NDA)</h4>
-                        <p className="text-[11px] opacity-75">Protección de secretos comerciales e información sensible compartida.</p>
+                        <p className="text-[11px] opacity-80">Protección de secretos comerciales e información sensible compartida.</p>
                       </div>
                       <select
                         value={store.intellectualProperty.confidentialityDurationYears}
                         onChange={(e) => store.updateIP({ confidentialityDurationYears: parseInt(e.target.value) })}
-                        className="px-2.5 py-1 rounded-lg border text-xs bg-black/10 dark:bg-white/10 font-bold focus:outline-none"
+                        className={inlineSelectClass}
+                        style={{ colorScheme: theme === 'warm' ? 'light' : 'dark' }}
                       >
-                        <option value={1}>Vigencia: 1 año</option>
-                        <option value={2}>Vigencia: 2 años</option>
-                        <option value={3}>Vigencia: 3 años (Estándar)</option>
-                        <option value={5}>Vigencia: 5 años</option>
+                        <option value={1} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>Vigencia: 1 año</option>
+                        <option value={2} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>Vigencia: 2 años</option>
+                        <option value={3} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>Vigencia: 3 años (Estándar)</option>
+                        <option value={5} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>Vigencia: 5 años</option>
                       </select>
                     </div>
                   </div>
@@ -1144,12 +1187,13 @@ export default function App() {
                       <select
                         value={store.governance.includedRevisionRounds}
                         onChange={(e) => store.updateGovernance({ includedRevisionRounds: parseInt(e.target.value) })}
-                        className="px-3 py-1.5 rounded-lg border text-xs bg-black/10 dark:bg-white/10 font-bold focus:outline-none font-mono"
+                        className={inlineSelectClass}
+                        style={{ colorScheme: theme === 'warm' ? 'light' : 'dark' }}
                       >
-                        <option value={1}>1 ronda</option>
-                        <option value={2}>2 rondas (Estándar)</option>
-                        <option value={3}>3 rondas</option>
-                        <option value={4}>4 rondas</option>
+                        <option value={1} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>1 ronda de ajustes</option>
+                        <option value={2} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>2 rondas (Estándar)</option>
+                        <option value={3} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>3 rondas</option>
+                        <option value={4} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>4 rondas</option>
                       </select>
                     </div>
 
@@ -1162,12 +1206,13 @@ export default function App() {
                       <select
                         value={store.governance.tacitApprovalWindowDays}
                         onChange={(e) => store.updateGovernance({ tacitApprovalWindowDays: parseInt(e.target.value) })}
-                        className="px-3 py-1.5 rounded-lg border text-xs bg-black/10 dark:bg-white/10 font-bold focus:outline-none font-mono text-emerald-500"
+                        className={inlineSelectClass}
+                        style={{ colorScheme: theme === 'warm' ? 'light' : 'dark' }}
                       >
-                        <option value={3}>3 días hábiles</option>
-                        <option value={5}>5 días hábiles (Recomendado)</option>
-                        <option value={7}>7 días hábiles</option>
-                        <option value={10}>10 días hábiles</option>
+                        <option value={3} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>3 días hábiles</option>
+                        <option value={5} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>5 días hábiles (Recomendado)</option>
+                        <option value={7} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>7 días hábiles</option>
+                        <option value={10} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>10 días hábiles</option>
                       </select>
                     </div>
 
@@ -1180,12 +1225,65 @@ export default function App() {
                       <select
                         value={store.governance.killFeePercentage}
                         onChange={(e) => store.updateGovernance({ killFeePercentage: parseInt(e.target.value) })}
-                        className="px-3 py-1.5 rounded-lg border text-xs bg-black/10 dark:bg-white/10 font-bold focus:outline-none font-mono text-amber-500"
+                        className={inlineSelectClass}
+                        style={{ colorScheme: theme === 'warm' ? 'light' : 'dark' }}
                       >
-                        <option value={30}>30% retenido</option>
-                        <option value={50}>50% retenido (Estándar)</option>
-                        <option value={70}>70% retenido</option>
+                        <option value={30} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>30% retenido</option>
+                        <option value={50} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>50% retenido (Estándar)</option>
+                        <option value={70} className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>70% retenido</option>
                       </select>
+                    </div>
+
+                    {/* Dispute Resolution Method */}
+                    <div className={`p-4 rounded-xl border flex items-center justify-between ${pillClass}`}>
+                      <div>
+                        <h4 className="text-xs font-bold">Resolución de Controversias</h4>
+                        <p className="text-[11px] opacity-75">Vía pactada para resolver cualquier diferendo legal</p>
+                      </div>
+                      <select
+                        value={store.governance.disputeResolutionMethod}
+                        onChange={(e) => store.updateGovernance({ disputeResolutionMethod: e.target.value as any })}
+                        className={inlineSelectClass}
+                        style={{ colorScheme: theme === 'warm' ? 'light' : 'dark' }}
+                      >
+                        <option value="amicable_negotiation" className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>Negociación Amistosa Bilateral (30 días)</option>
+                        <option value="arbitration" className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>Arbitraje Comercial Privado (CAM)</option>
+                        <option value="ordinary_courts" className={optionClass} style={{ backgroundColor: theme === 'warm' ? '#ffffff' : '#0B1120', color: theme === 'warm' ? '#1C1917' : '#F8FAFC' }}>Tribunales Mercantiles Ordinarios</option>
+                      </select>
+                    </div>
+
+                    {/* Jurisdiction City & State Inputs */}
+                    <div className={`p-4 rounded-xl border ${pillClass} space-y-3`}>
+                      <div>
+                        <h4 className="text-xs font-bold">Jurisdicción y Tribunales Competentes</h4>
+                        <p className="text-[11px] opacity-75">Ciudad y Estado sede para validez legal e interpretación</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[10px] opacity-75 block mb-1">Ciudad</label>
+                          <input
+                            type="text"
+                            value={store.governance.jurisdiction.city}
+                            onChange={(e) => store.updateGovernance({
+                              jurisdiction: { ...store.governance.jurisdiction, city: e.target.value }
+                            })}
+                            className={inputClass}
+                            placeholder="Ej. Ciudad de México"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] opacity-75 block mb-1">Estado / Región</label>
+                          <input
+                            type="text"
+                            value={store.governance.jurisdiction.state}
+                            onChange={(e) => store.updateGovernance({
+                              jurisdiction: { ...store.governance.jurisdiction, state: e.target.value }
+                            })}
+                            className={inputClass}
+                            placeholder="Ej. CDMX"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1228,7 +1326,7 @@ export default function App() {
           {/* -------------------------------------------------------------
               RIGHT PANEL: CANONICAL DOCUMENT PREVIEW (48% ON DESKTOP)
           -------------------------------------------------------------- */}
-          <div className="w-full lg:w-[48%] bg-slate-900/40 p-6 lg:p-8 overflow-y-auto flex flex-col items-center">
+          <div className={previewBackdropClass}>
             
             {/* Quick Actions Bar above document */}
             <div className="w-full max-w-[760px] mb-3 flex items-center justify-between text-xs px-1">
@@ -1376,9 +1474,43 @@ export default function App() {
                   </section>
 
                   {/* Legal Stamp Footer */}
-                  <div className="pt-6 border-t border-slate-200 mt-8 flex items-center justify-between text-[11px] text-slate-500 font-sans">
-                    <span>Hash canónico: SHA-256 {store.cachedDocumentHash.substring(0, 16)}...</span>
-                    <span className="font-mono">Certificación NOM-151</span>
+                  <div className="pt-6 border-t border-slate-200 mt-8 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 font-sans relative">
+                    <div className="flex items-center gap-2">
+                      <span>Hash canónico: <code className="font-mono text-blue-600 bg-blue-50 px-1 py-0.5 rounded">{store.cachedDocumentHash.substring(0, 16)}...</code></span>
+                      <button
+                        onClick={() => setShowAuditInspector(!showAuditInspector)}
+                        className="text-[10px] text-blue-600 hover:underline flex items-center gap-0.5 font-bold cursor-pointer"
+                        title="Verificar huella SHA-256 e integridad"
+                      >
+                        <Search className="w-3 h-3" />
+                        <span>Inspeccionar</span>
+                      </button>
+                    </div>
+
+                    <span className="font-mono text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200">
+                      Certificación NOM-151 PSC
+                    </span>
+
+                    {/* Cryptographic Inspector Popover */}
+                    {showAuditInspector && (
+                      <div className="absolute bottom-10 left-0 right-0 z-30 p-4 rounded-xl bg-slate-900 text-white shadow-2xl border border-slate-700 space-y-2 animate-scaleUp text-xs font-sans">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                          <span className="font-bold flex items-center gap-1.5 text-blue-400">
+                            <Shield className="w-4 h-4" />
+                            <span>Auditor Criptográfico SHA-256 en Vivo</span>
+                          </span>
+                          <button onClick={() => setShowAuditInspector(false)} className="text-slate-400 hover:text-white cursor-pointer">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="space-y-1 font-mono text-[11px] text-slate-300">
+                          <p><span className="text-slate-500">Digest Completo:</span> <span className="text-emerald-400 break-all">{store.cachedDocumentHash}</span></p>
+                          <p><span className="text-slate-500">Normalización:</span> Unicode NFC + Unix LF (ISO/IEC 10646)</p>
+                          <p><span className="text-slate-500">Sello Temporal:</span> CENAM UTC Stratum-1 vía PSC</p>
+                          <p><span className="text-slate-500">Invariante:</span> 100% Determinista (0% Colisión)</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

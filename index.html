@@ -71,6 +71,36 @@
       .paper-shadow-warm {
         box-shadow: 0 20px 40px -15px rgba(60, 45, 30, 0.15), 0 0 0 1px rgba(60, 45, 30, 0.08);
       }
+      /* Bulletproof Cross-OS Dropdown Select & Option Readability */
+      select {
+        color-scheme: dark;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+      }
+      select option {
+        background-color: #0B1120 !important;
+        color: #F8FAFC !important;
+        padding: 8px 12px;
+      }
+      .theme-warm select,
+      [data-theme="warm"] select {
+        color-scheme: light !important;
+      }
+      .theme-warm select option,
+      [data-theme="warm"] select option {
+        background-color: #FFFFFF !important;
+        color: #1C1917 !important;
+      }
+      .theme-contrast select,
+      [data-theme="contrast"] select {
+        color-scheme: dark !important;
+      }
+      .theme-contrast select option,
+      [data-theme="contrast"] select option {
+        background-color: #000000 !important;
+        color: #FDE047 !important;
+      }
       @media print {
         header, .no-print, button, .wizard-controls {
           display: none !important;
