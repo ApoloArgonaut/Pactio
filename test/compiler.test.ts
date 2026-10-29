@@ -138,10 +138,11 @@ describe('Suite de Pruebas: Compilador Canónico Dual y Hashing SHA-256', () => 
   };
 
   describe('1. Formato de Moneda y Normalización Canónica', () => {
-    it('convierte montos en centavos enteros a cadenas monetarias formateadas (es-MX)', () => {
+    it('convierte montos en centavos enteros a cadenas monetarias formateadas (es-MX / es-ES / en-US)', () => {
       expect(formatCurrencyAmount(3000000, 'MXN')).toBe('$30,000.00 MXN');
       expect(formatCurrencyAmount(150000, 'MXN')).toBe('$1,500.00 MXN');
       expect(formatCurrencyAmount(500000, 'USD')).toBe('$5,000.00 USD');
+      expect(formatCurrencyAmount(450000, 'EUR')).toBe('€4,500.00 EUR');
       expect(formatCurrencyAmount(0, 'MXN')).toBe('$0.00 MXN');
       expect(formatCurrencyAmount(99, 'MXN')).toBe('$0.99 MXN');
     });

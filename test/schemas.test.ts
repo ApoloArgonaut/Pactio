@@ -266,6 +266,39 @@ describe('Suite de Pruebas: Schemas Contractuales y Reglas de Negocio', () => {
       expect(parsed.success).toBe(true);
     });
 
+    it('valida planes de pago con moneda EUR (Euros de la Unión Europea)', () => {
+      const planEur = {
+        currency: 'EUR',
+        totalAmountCents: 500000,
+        model: 'fixed_50_50',
+        milestones: [
+          {
+            id: 'm1',
+            order: 1,
+            title: 'Anticipo 50%',
+            deliverables: ['Kick-off y UI Kit'],
+            percentage: 50,
+            amountCents: 250000,
+            status: 'pending'
+          },
+          {
+            id: 'm2',
+            order: 2,
+            title: 'Finiquito 50%',
+            deliverables: ['Prototipo Navegable'],
+            percentage: 50,
+            amountCents: 250000,
+            status: 'pending'
+          }
+        ]
+      };
+      const parsed = PaymentPlanSchema.safeParse(planEur);
+      expect(parsed.success).toBe(true);
+      if (parsed.success) {
+        expect(parsed.data.currency).toBe('EUR');
+      }
+    });
+
     it('rechaza de forma estricta planes cuya suma de porcentajes exceda el 100% (QA-DAT-05)', () => {
       const planExcess = {
         currency: 'MXN',

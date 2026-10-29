@@ -5,9 +5,11 @@ import {
   Search, Trash2, Copy, Check, AlertCircle, ArrowRight, ArrowLeft,
   Lock, Calendar, DollarSign, UserCheck, PenTool, Sparkles, X,
   Clock, CheckCheck, FileCode, Layers, ExternalLink, ChevronDown, ChevronUp,
-  Printer, Home, User, Users, Share2, Award, Zap, CheckSquare
+  Printer, Home, User, Users, Share2, Award, Zap, CheckSquare, Plus,
+  CreditCard, Globe, Landmark, AlertTriangle, FileKey, Info
 } from 'lucide-react';
 import { useContractStore, PreviewMode } from './core/store/contract-store';
+import type { Milestone } from './core/schemas/milestone';
 
 type ThemeMode = 'midnight' | 'warm' | 'contrast';
 type ActiveTab = 'landing' | 'creator' | 'vault' | 'client-review' | 'confirmed';
@@ -36,12 +38,24 @@ export default function App() {
   const [stampedSuccess, setStampedSuccess] = useState(false);
   const [stampingStep, setStampingStep] = useState(0);
 
-  // Search in Vault
+  // Search & Filtering in Vault
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Payment Method selection
+  const [paymentMethod, setPaymentMethod] = useState<'spei' | 'stripe' | 'wise'>('spei');
 
   // Signature Canvas Ref
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+
+  // Open Signature Modal safely (resets state so it never opens blank)
+  const openSignatureModal = () => {
+    setStampedSuccess(false);
+    setIsStamping(false);
+    setStampingStep(0);
+    setSignatureDone(false);
+    setIsSignModalOpen(true);
+  };
 
   // Copy NanoID
   const handleCopyNanoID = () => {
@@ -58,7 +72,7 @@ export default function App() {
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
-  // Drawing in Canvas
+  // Canvas Drawing Handlers
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     setIsDrawing(true);
     const canvas = canvasRef.current;
@@ -102,7 +116,7 @@ export default function App() {
     setSignatureDone(false);
   };
 
-  // Run Stamping Simulation
+  // Stamping Simulation Handler
   const handleStartStamping = () => {
     setIsStamping(true);
     setStampingStep(1);
@@ -140,6 +154,11 @@ export default function App() {
       parties: {
         creatorRfc: store.parties.creator.rfc,
         clientRfc: store.parties.client.rfc,
+      },
+      paymentPlan: {
+        currency: store.payments.currency,
+        totalAmountFormatted: `${(store.payments.totalAmountCents / 100).toLocaleString()} ${store.payments.currency}`,
+        milestonesCount: store.payments.milestones.length
       },
       integrityProof: 'ASN1_DER_ENCODED_BINARY_TOKEN_MOCK_VALID'
     };
@@ -210,6 +229,43 @@ export default function App() {
     warm: 'p-4 rounded-xl bg-[#EAF5EF] border border-[#B7DEC7] text-emerald-950 shadow-sm',
     contrast: 'p-4 rounded-xl bg-black border-2 border-green-400 text-green-300',
   }[theme];
+
+  // Currency Symbol helper
+  const currencySymbol = store.payments.currency === 'EUR' ? '€' : '$';
+
+  // Total Milestones percentage sum
+  const milestonesPercentSum = store.payments.milestones.reduce((acc, m) => acc + m.percentage, 0);
+  const isPercentBalanced = Math.abs(milestonesPercentSum - 100) < 0.1;
+
+  // Add custom milestone
+  const handleAddMilestone = () => {
+    const count = store.payments.milestones.length + 1;
+    const remainingPercent = Math.max(0, 100 - milestonesPercentSum);
+    const amount = Math.round((store.payments.totalAmountCents * remainingPercent) / 100);
+    const newMilestone: Milestone = {
+      id: `m${count}-${Date.now()}`,
+      order: count,
+      title: `Hito ${count}: Entregable adicional`,
+      percentage: remainingPercent > 0 ? remainingPercent : 20,
+      amountCents: amount > 0 ? amount : Math.round(store.payments.totalAmountCents * 0.2),
+      deliverables: ['Revisión técnica y validación final'],
+      status: 'pending'
+    };
+    store.addMilestone(newMilestone);
+  };
+
+  // Auto-balance milestones to exactly 100%
+  const handleAutoBalance = () => {
+    const list = store.payments.milestones;
+    if (list.length === 0) return;
+    const equalShare = Math.floor(100 / list.length);
+    let rem = 100 - equalShare * list.length;
+    list.forEach((m, idx) => {
+      const p = equalShare + (idx === list.length - 1 ? rem : 0);
+      const amt = Math.round((store.payments.totalAmountCents * p) / 100);
+      store.updateMilestone(m.id, { percentage: p, amountCents: amt });
+    });
+  };
 
   const isSignReady = (signatureType === 'touch' && signatureDone) || 
                       (signatureType === 'type' && typedName.trim().length >= 3) ||
@@ -382,7 +438,7 @@ export default function App() {
           <div className="text-center space-y-5 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-500 text-xs font-semibold">
               <Zap className="w-3.5 h-3.5" />
-              <span>LegalTech Bilateral para Freelancers & Clientes en LATAM</span>
+              <span>LegalTech Bilateral para Freelancers & Clientes en México, LATAM y Europa</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
@@ -390,7 +446,7 @@ export default function App() {
             </h1>
 
             <p className="text-sm sm:text-base opacity-80 max-w-2xl mx-auto leading-relaxed">
-              Pactio elimina la fricción de los contratos tradicionales: traducción instantánea a <strong>lenguaje ciudadano</strong>, anticipo obligatorio del 50%, retención de propiedad intelectual (Art. 83 LFDA) y validez jurídica probatoria con <strong>sello de tiempo NOM-151 oficial</strong>.
+              Pactio elimina la fricción de los contratos tradicionales: traducción instantánea a <strong>lenguaje ciudadano</strong>, anticipo obligatorio del 50%, retención de propiedad intelectual (Art. 83 LFDA), soporte multi-moneda (MXN, USD, EUR) y validez jurídica probatoria con <strong>sello de tiempo NOM-151 oficial</strong>.
             </p>
 
             <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
@@ -432,7 +488,7 @@ export default function App() {
               </div>
               <h3 className="font-bold text-base">Traducción Ciudadana Dual</h3>
               <p className="text-xs opacity-75 leading-relaxed">
-                El cliente y tú ven el mismo acuerdo en dos idiomas: <em>Vista Humana</em> (sin letras chiquitas ni jerga latina) o <em>Vista Jurídica</em> formal para el SAT y tribunales.
+                El cliente y tú ven el mismo acuerdo en dos idiomas: <em>Vista Humana</em> (sin letras chiquitas ni jerga latina) o <em>Vista Jurídica</em> formal para el SAT y tribunales mercantiles.
               </p>
             </div>
 
@@ -504,7 +560,7 @@ export default function App() {
                 </span>
                 <div className="flex items-center gap-1.5 text-xs opacity-75">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>Guardado automático</span>
+                  <span>Guardado reactivo</span>
                 </div>
               </div>
 
@@ -546,7 +602,7 @@ export default function App() {
                     </h2>
                     {activeTooltip === 'parties' && (
                       <div className={`p-3 my-2 text-xs rounded-xl border ${infoBoxClass}`}>
-                        <p className="font-semibold text-blue-500">💡 Tip de Materialidad SAT:</p>
+                        <p className="font-semibold text-blue-500">💡 Tip de Materialidad Fiscal (SAT & LATAM):</p>
                         <p>Los RFCs válidos y domicilios fiscales reales son indispensables para que tu factura sea 100% deducible y cumpla con el Artículo 69-B del CFF.</p>
                       </div>
                     )}
@@ -570,7 +626,7 @@ export default function App() {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>RFC con Homoclave (SAT)</label>
+                        <label className={labelClass}>RFC con Homoclave (SAT / Tax ID)</label>
                         <input
                           type="text"
                           value={store.parties.creator.rfc}
@@ -617,7 +673,7 @@ export default function App() {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>RFC del Cliente</label>
+                        <label className={labelClass}>RFC / Tax ID del Cliente</label>
                         <input
                           type="text"
                           value={store.parties.client.rfc}
@@ -664,7 +720,7 @@ export default function App() {
                     </h2>
                     {activeTooltip === 'scope' && (
                       <div className={`p-3 my-2 text-xs rounded-xl border ${infoBoxClass}`}>
-                        <p className="font-semibold text-blue-500">💡 Cómo evitar el Scope Creep:</p>
+                        <p className="font-semibold text-blue-500">💡 Cómo blindar el Scope Creep:</p>
                         <p>Delimitar claramente lo que incluye y lo que NO incluye protege tu tiempo y te da base legal para cobrar adicionales.</p>
                       </div>
                     )}
@@ -682,7 +738,7 @@ export default function App() {
                     </div>
 
                     <div>
-                      <label className={labelClass}>Descripción del alcance</label>
+                      <label className={labelClass}>Descripción del alcance detallado</label>
                       <textarea
                         rows={3}
                         value={store.scope.description}
@@ -705,7 +761,7 @@ export default function App() {
                 </div>
               )}
 
-              {/* STEP 3: PAYMENTS & MILESTONES (100% EDITABLE) */}
+              {/* STEP 3: PAYMENTS, MILESTONES & CURRENCY (EUR / USD / MXN) */}
               {currentStep === 3 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div>
@@ -721,18 +777,18 @@ export default function App() {
                     </h2>
                     {activeTooltip === 'milestones' && (
                       <div className={`p-3 my-2 text-xs rounded-xl border ${infoBoxClass}`}>
-                        <p className="font-semibold text-blue-500">💡 La Regla del Anticipo:</p>
-                        <p>Trabajar sin anticipo es el riesgo #1 para cualquier profesional. Pactio estructura el 50% de anticipo para blindar tu tiempo desde el día cero.</p>
+                        <p className="font-semibold text-blue-500">💡 La Regla de Oro del Anticipo:</p>
+                        <p>Trabajar sin anticipo es el riesgo #1 para cualquier profesional. Pactio estructura modelos seguros para blindar tu tiempo y finanzas desde el día cero.</p>
                       </div>
                     )}
                   </div>
 
-                  {/* Total Amount & Currency */}
+                  {/* Total Amount & Currency Selector (MXN, USD, EUR) */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className={labelClass}>Monto total del proyecto</label>
                       <div className="relative">
-                        <span className="absolute left-3.5 top-3 text-sm opacity-60 font-mono">$</span>
+                        <span className="absolute left-3.5 top-3 text-sm opacity-60 font-mono">{currencySymbol}</span>
                         <input
                           type="number"
                           step="1000"
@@ -751,60 +807,212 @@ export default function App() {
                       <label className={labelClass}>Moneda contractual</label>
                       <select
                         value={store.payments.currency}
-                        onChange={(e) => store.updatePayments({ currency: e.target.value as 'MXN' | 'USD' })}
+                        onChange={(e) => store.updatePayments({ currency: e.target.value as 'MXN' | 'USD' | 'EUR' })}
                         className={inputClass}
                       >
-                        <option value="MXN">MXN (Pesos Mexicanos)</option>
-                        <option value="USD">USD (Dólares Americanos)</option>
+                        <option value="MXN">MXN ($ Pesos Mexicanos)</option>
+                        <option value="USD">USD ($ Dólares Americanos)</option>
+                        <option value="EUR">EUR (€ Euros Unión Europea)</option>
                       </select>
                     </div>
                   </div>
 
-                  {/* Milestones Balance Bar */}
+                  {/* Payment Model Presets */}
+                  <div className="space-y-2">
+                    <label className={labelClass}>Modelo de Distribución de Pagos</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                      <button
+                        onClick={() => store.applyPaymentPreset('fixed_50_50')}
+                        className={`p-3 rounded-xl border text-left transition-all ${
+                          store.payments.milestones.length === 2 && store.payments.milestones[0].percentage === 50
+                            ? 'bg-blue-600 text-white font-bold border-blue-500 shadow-sm'
+                            : `${pillClass} hover:border-blue-400`
+                        }`}
+                      >
+                        <span className="block font-bold">50% / 50% Estándar</span>
+                        <span className="text-[11px] opacity-80">Anticipo + Finiquito (Recomendado)</span>
+                      </button>
+
+                      <button
+                        onClick={() => store.applyPaymentPreset('milestones_3')}
+                        className={`p-3 rounded-xl border text-left transition-all ${
+                          store.payments.milestones.length === 3
+                            ? 'bg-blue-600 text-white font-bold border-blue-500 shadow-sm'
+                            : `${pillClass} hover:border-blue-400`
+                        }`}
+                      >
+                        <span className="block font-bold">30% / 40% / 30% Hitos</span>
+                        <span className="text-[11px] opacity-80">Proyectos Medianos & Wireframes</span>
+                      </button>
+
+                      <button
+                        onClick={() => store.applyPaymentPreset('full_advance')}
+                        className={`p-3 rounded-xl border text-left transition-all ${
+                          store.payments.milestones.length === 1 && store.payments.milestones[0].percentage === 100
+                            ? 'bg-blue-600 text-white font-bold border-blue-500 shadow-sm'
+                            : `${pillClass} hover:border-blue-400`
+                        }`}
+                      >
+                        <span className="block font-bold">100% Anticipo Express</span>
+                        <span className="text-[11px] opacity-80">Sprints cortos & Auditorías</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Interactive Milestones Editor */}
                   <div className={`p-5 rounded-2xl border ${infoBoxClass} space-y-4`}>
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold">Distribución de Pagos & Anticipo</span>
-                      <span className="text-emerald-500 font-bold font-mono">100% Balanceado (2 hitos)</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">Hitos de Pago ({store.payments.milestones.length})</span>
+                        {isPercentBalanced ? (
+                          <span className="text-emerald-500 font-bold font-mono text-[11px] bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                            ✓ 100% Balanceado
+                          </span>
+                        ) : (
+                          <span className="text-amber-500 font-bold font-mono text-[11px] bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30 flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3" />
+                            {milestonesPercentSum}% total (desbalanceado)
+                          </span>
+                        )}
+                      </div>
+
+                      {!isPercentBalanced && (
+                        <button
+                          onClick={handleAutoBalance}
+                          className="text-xs text-blue-500 font-bold hover:underline"
+                        >
+                          Auto-Equilibrar a 100%
+                        </button>
+                      )}
                     </div>
 
-                    {/* Visual Bar */}
+                    {/* Visual Distribution Bar */}
                     <div className="w-full h-3.5 bg-slate-200 dark:bg-slate-800 rounded-full flex overflow-hidden shadow-inner">
-                      <div className="bg-blue-600 h-full w-1/2 flex items-center justify-center text-[9px] font-bold text-white">50%</div>
-                      <div className="bg-emerald-600 h-full w-1/2 flex items-center justify-center text-[9px] font-bold text-white">50%</div>
+                      {store.payments.milestones.map((m, idx) => {
+                        const colors = ['bg-blue-600', 'bg-emerald-600', 'bg-indigo-600', 'bg-amber-600'];
+                        return (
+                          <div
+                            key={m.id}
+                            style={{ width: `${m.percentage}%` }}
+                            className={`${colors[idx % colors.length]} h-full flex items-center justify-center text-[9px] font-bold text-white transition-all`}
+                            title={`${m.title}: ${m.percentage}%`}
+                          >
+                            {m.percentage > 12 ? `${m.percentage}%` : ''}
+                          </div>
+                        );
+                      })}
                     </div>
 
-                    {/* Milestones List */}
+                    {/* Milestones Dynamic List */}
                     <div className="space-y-3 pt-2">
-                      <div className={`p-3.5 rounded-xl border flex items-center justify-between ${pillClass}`}>
-                        <div>
-                          <span className="text-xs font-bold text-blue-500 block">Hito 1: Anticipo de Inicio (50%)</span>
-                          <span className="text-[11px] opacity-75">Requisito previo indispensable para comenzar labores</span>
-                        </div>
-                        <span className="text-sm font-mono font-bold text-blue-500">
-                          ${((store.payments.totalAmountCents * 0.5) / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}
-                        </span>
-                      </div>
+                      {store.payments.milestones.map((m, idx) => (
+                        <div key={m.id} className={`p-3.5 rounded-xl border ${pillClass} space-y-2`}>
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex-1">
+                              <span className="text-[10px] font-bold text-blue-500 uppercase font-mono block">
+                                Hito {idx + 1}
+                              </span>
+                              <input
+                                type="text"
+                                value={m.title}
+                                onChange={(e) => store.updateMilestone(m.id, { title: e.target.value })}
+                                className="w-full bg-transparent font-bold text-xs focus:outline-none border-b border-transparent hover:border-slate-400 focus:border-blue-500"
+                              />
+                            </div>
 
-                      <div className={`p-3.5 rounded-xl border flex items-center justify-between ${pillClass}`}>
-                        <div>
-                          <span className="text-xs font-bold text-emerald-500 block">Hito 2: Finiquito contra Entrega (50%)</span>
-                          <span className="text-[11px] opacity-75">Previo a la entrega de archivos editables finales</span>
+                            <div className="flex items-center gap-3">
+                              {/* Percentage input */}
+                              <div className="flex items-center gap-1">
+                                <input
+                                  type="number"
+                                  min="1"
+                                  max="100"
+                                  value={m.percentage}
+                                  onChange={(e) => {
+                                    const p = Math.max(1, Math.min(100, parseInt(e.target.value) || 0));
+                                    const amt = Math.round((store.payments.totalAmountCents * p) / 100);
+                                    store.updateMilestone(m.id, { percentage: p, amountCents: amt });
+                                  }}
+                                  className="w-14 px-2 py-1 bg-black/10 dark:bg-white/10 rounded font-mono text-xs font-bold text-center focus:outline-none"
+                                />
+                                <span className="text-xs font-mono font-bold">%</span>
+                              </div>
+
+                              {/* Amount Display */}
+                              <span className="text-xs font-mono font-bold text-blue-500 min-w-24 text-right">
+                                {currencySymbol}{((m.amountCents) / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                              </span>
+
+                              {/* Remove milestone button */}
+                              {store.payments.milestones.length > 1 && (
+                                <button
+                                  onClick={() => store.removeMilestone(m.id)}
+                                  className="text-red-400 hover:text-red-500 p-1 opacity-70 hover:opacity-100"
+                                  title="Eliminar hito"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <span className="text-sm font-mono font-bold text-emerald-500">
-                          ${((store.payments.totalAmountCents * 0.5) / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}
-                        </span>
-                      </div>
+                      ))}
+
+                      {/* Add Milestone Button */}
+                      <button
+                        onClick={handleAddMilestone}
+                        className="w-full py-2 border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 rounded-xl text-xs font-bold text-blue-500 flex items-center justify-center gap-1.5 transition-colors"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Añadir Hito Personalizado</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Payment Method Details (SPEI / Stripe / Wise) */}
+                  <div className={`p-4 rounded-xl border ${infoBoxClass} space-y-3`}>
+                    <label className={labelClass}>Canal de Cobro Preferido</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                      <button
+                        onClick={() => setPaymentMethod('spei')}
+                        className={`p-2.5 rounded-lg border flex items-center gap-2 font-medium ${
+                          paymentMethod === 'spei' ? 'bg-blue-600 text-white font-bold' : `${pillClass}`
+                        }`}
+                      >
+                        <Landmark className="w-4 h-4" />
+                        <span>SPEI / CLABE (MX)</span>
+                      </button>
+
+                      <button
+                        onClick={() => setPaymentMethod('stripe')}
+                        className={`p-2.5 rounded-lg border flex items-center gap-2 font-medium ${
+                          paymentMethod === 'stripe' ? 'bg-blue-600 text-white font-bold' : `${pillClass}`
+                        }`}
+                      >
+                        <CreditCard className="w-4 h-4" />
+                        <span>Tarjeta / Stripe</span>
+                      </button>
+
+                      <button
+                        onClick={() => setPaymentMethod('wise')}
+                        className={`p-2.5 rounded-lg border flex items-center gap-2 font-medium ${
+                          paymentMethod === 'wise' ? 'bg-blue-600 text-white font-bold' : `${pillClass}`
+                        }`}
+                      >
+                        <Globe className="w-4 h-4" />
+                        <span>Wise / IBAN (EUR/USD)</span>
+                      </button>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* STEP 4: INTELLECTUAL PROPERTY */}
+              {/* STEP 4: INTELLECTUAL PROPERTY & RIGHTS (EXPANDED & DETAILED) */}
               {currentStep === 4 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div>
                     <h2 className="text-xl font-bold flex items-center gap-2">
-                      <span>Propiedad Intelectual y Derechos</span>
+                      <span>Propiedad Intelectual, Derechos & Confidencialidad</span>
                       <button
                         onClick={() => setActiveTooltip(activeTooltip === 'ip' ? null : 'ip')}
                         className="opacity-60 hover:opacity-100 hover:text-blue-500 transition-opacity"
@@ -815,49 +1023,101 @@ export default function App() {
                     </h2>
                     {activeTooltip === 'ip' && (
                       <div className={`p-3 my-2 text-xs rounded-xl border ${infoBoxClass}`}>
-                        <p className="font-semibold text-blue-500">💡 Artículo 83 LFDA:</p>
-                        <p>En México, las obras por encargo no transfieren derechos patrimoniales si no se liquida la contraprestación. Pactio activa esta condición suspensiva por defecto.</p>
+                        <p className="font-semibold text-blue-500">💡 Artículo 83 de la LFDA:</p>
+                        <p>En obras por encargo, los derechos patrimoniales pertenecen al creador hasta que se pague el 100%. Pactio hace que este candado sea inamovible para protegerte de clientes que reciben el trabajo y no pagan el finiquito.</p>
                       </div>
                     )}
                   </div>
 
-                  {/* Reserva de Dominio Card */}
+                  {/* 1. Golden Lock: Reserva de Dominio (Pago 100%) */}
                   <div className={ipBannerClass}>
                     <div className="flex items-center gap-2 font-bold text-sm mb-2 text-emerald-600 dark:text-emerald-400">
                       <Lock className="w-4 h-4" />
-                      <span>Reserva de Dominio (Pago 100% Obligatorio)</span>
+                      <span>1. Reserva de Dominio Definitiva (Pago 100% Obligatorio)</span>
                     </div>
                     <p className="text-xs leading-relaxed opacity-90">
-                      Conforme al <strong>Artículo 83 de la Ley Federal del Derecho de Autor (LFDA)</strong>, la cesión de derechos patrimoniales sobre los diseños y código opera única y exclusivamente sujeta a la <strong>condición suspensiva de liquidación del 100%</strong> del precio pactado.
+                      Conforme al <strong>Artículo 83 de la Ley Federal del Derecho de Autor (LFDA)</strong>, la cesión de derechos patrimoniales sobre los diseños, código y entregables opera <strong>única y exclusivamente sujeta a la condición suspensiva de liquidación del 100%</strong> de la contraprestación pactada.
                     </p>
                     <div className="mt-3 flex items-center gap-2 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                       <Check className="w-4 h-4" />
-                      <span>Cláusula blindada activada por defecto</span>
+                      <span>Cláusula blindada activada por defecto en el contrato</span>
                     </div>
                   </div>
 
-                  {/* Portfolio Rights Checkbox */}
+                  {/* 2. Retention of Creator's Background IP / Know-how */}
                   <div className={`p-4 rounded-xl border flex items-center justify-between ${pillClass} hover:border-blue-400 transition-all`}>
-                    <div className="space-y-0.5">
-                      <h4 className="text-xs font-bold">Derecho de Exhibición en Portafolio</h4>
-                      <p className="text-[11px] opacity-75">Te autoriza a mostrar el caso de estudio en tu web, Behance y redes profesionales.</p>
+                    <div className="space-y-0.5 max-w-md">
+                      <div className="flex items-center gap-1.5 font-bold text-xs">
+                        <FileKey className="w-4 h-4 text-blue-500" />
+                        <span>2. Retención de Background IP y Librerías Previas</span>
+                      </div>
+                      <p className="text-[11px] opacity-75">
+                        El creador retiene la titularidad sobre sus plantillas previas, frameworks base, fuentes y herramientas metodológicas. Solo se transfieren los entregables finales específicos.
+                      </p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={store.intellectualProperty.retainCreatorBackgroundIP}
+                      onChange={(e) => store.updateIP({ retainCreatorBackgroundIP: e.target.checked })}
+                      className="w-5 h-5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0 ml-3"
+                    />
+                  </div>
+
+                  {/* 3. Moral Rights (Art. 21 LFDA) */}
+                  <div className={`p-4 rounded-xl border ${pillClass} space-y-1`}>
+                    <div className="flex items-center gap-1.5 font-bold text-xs text-indigo-500">
+                      <Award className="w-4 h-4" />
+                      <span>3. Derechos Morales Irrenunciables (Crédito de Autoría)</span>
+                    </div>
+                    <p className="text-[11px] opacity-75 leading-relaxed">
+                      El Artículo 21 de la LFDA establece que el derecho a ser reconocido como autor original es inalienable, perpetuo e irrenunciable. El cliente no puede adjudicarse la autoría intelectual original.
+                    </p>
+                  </div>
+
+                  {/* 4. Portfolio Showcase Rights */}
+                  <div className={`p-4 rounded-xl border flex items-center justify-between ${pillClass} hover:border-blue-400 transition-all`}>
+                    <div className="space-y-0.5 max-w-md">
+                      <h4 className="text-xs font-bold">4. Derecho de Exhibición en Portafolio</h4>
+                      <p className="text-[11px] opacity-75">
+                        Te autoriza a mostrar el caso de estudio y capturas en tu sitio web, Behance, LinkedIn y presentaciones comerciales tras el lanzamiento público.
+                      </p>
                     </div>
                     <input
                       type="checkbox"
                       checked={store.intellectualProperty.creatorPortfolioRights}
                       onChange={(e) => store.updateIP({ creatorPortfolioRights: e.target.checked })}
-                      className="w-5 h-5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      className="w-5 h-5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0 ml-3"
                     />
+                  </div>
+
+                  {/* 5. NDA / Confidentiality Agreement */}
+                  <div className={`p-4 rounded-xl border ${pillClass} space-y-3`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-xs font-bold">5. Acuerdo Bilateral de Confidencialidad (NDA)</h4>
+                        <p className="text-[11px] opacity-75">Protección de secretos comerciales e información sensible compartida.</p>
+                      </div>
+                      <select
+                        value={store.intellectualProperty.confidentialityDurationYears}
+                        onChange={(e) => store.updateIP({ confidentialityDurationYears: parseInt(e.target.value) })}
+                        className="px-2.5 py-1 rounded-lg border text-xs bg-black/10 dark:bg-white/10 font-bold focus:outline-none"
+                      >
+                        <option value={1}>Vigencia: 1 año</option>
+                        <option value={2}>Vigencia: 2 años</option>
+                        <option value={3}>Vigencia: 3 años (Estándar)</option>
+                        <option value={5}>Vigencia: 5 años</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* STEP 5: GOVERNANCE & CLOSE */}
+              {/* STEP 5: GOVERNANCE, REVISIONS & EXIT RULES */}
               {currentStep === 5 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div>
                     <h2 className="text-xl font-bold flex items-center gap-2">
-                      <span>Gobernanza y Reglas de Salida</span>
+                      <span>Gobernanza y Reglas de Salida Limpia</span>
                       <button
                         onClick={() => setActiveTooltip(activeTooltip === 'gov' ? null : 'gov')}
                         className="opacity-60 hover:opacity-100 hover:text-blue-500 transition-opacity"
@@ -869,34 +1129,63 @@ export default function App() {
                     {activeTooltip === 'gov' && (
                       <div className={`p-3 my-2 text-xs rounded-xl border ${infoBoxClass}`}>
                         <p className="font-semibold text-blue-500">💡 Silencio Tácito:</p>
-                        <p>El que calla otorga. Si el cliente no formula observaciones en 5 días hábiles tras la entrega, el hito se tiene por aprobado tácitamente.</p>
+                        <p>El que calla otorga. Si el cliente no formula observaciones fundamentadas en los días hábiles acordados tras la entrega, el hito se tiene por aprobado tácitamente para liberar el pago.</p>
                       </div>
                     )}
                   </div>
 
                   <div className="space-y-3">
+                    {/* Revision rounds */}
                     <div className={`p-4 rounded-xl border flex items-center justify-between ${pillClass}`}>
                       <div>
                         <h4 className="text-xs font-bold">Rondas de Ajustes Incluidas</h4>
-                        <p className="text-[11px] opacity-75">Límite para evitar cambios infinitos y re-trabajo</p>
+                        <p className="text-[11px] opacity-75">Límite para evitar cambios infinitos y re-trabajo gratuito</p>
                       </div>
-                      <span className="px-3 py-1 bg-blue-500/10 text-blue-500 font-bold rounded-lg text-xs font-mono">2 rondas</span>
+                      <select
+                        value={store.governance.includedRevisionRounds}
+                        onChange={(e) => store.updateGovernance({ includedRevisionRounds: parseInt(e.target.value) })}
+                        className="px-3 py-1.5 rounded-lg border text-xs bg-black/10 dark:bg-white/10 font-bold focus:outline-none font-mono"
+                      >
+                        <option value={1}>1 ronda</option>
+                        <option value={2}>2 rondas (Estándar)</option>
+                        <option value={3}>3 rondas</option>
+                        <option value={4}>4 rondas</option>
+                      </select>
                     </div>
 
+                    {/* Tacit approval window */}
                     <div className={`p-4 rounded-xl border flex items-center justify-between ${pillClass}`}>
                       <div>
                         <h4 className="text-xs font-bold">Ventana de Aceptación Tácita</h4>
                         <p className="text-[11px] opacity-75">Días hábiles para revisar antes de aprobación automática</p>
                       </div>
-                      <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 font-bold rounded-lg text-xs font-mono">5 días hábiles</span>
+                      <select
+                        value={store.governance.tacitApprovalWindowDays}
+                        onChange={(e) => store.updateGovernance({ tacitApprovalWindowDays: parseInt(e.target.value) })}
+                        className="px-3 py-1.5 rounded-lg border text-xs bg-black/10 dark:bg-white/10 font-bold focus:outline-none font-mono text-emerald-500"
+                      >
+                        <option value={3}>3 días hábiles</option>
+                        <option value={5}>5 días hábiles (Recomendado)</option>
+                        <option value={7}>7 días hábiles</option>
+                        <option value={10}>10 días hábiles</option>
+                      </select>
                     </div>
 
+                    {/* Kill Fee */}
                     <div className={`p-4 rounded-xl border flex items-center justify-between ${pillClass}`}>
                       <div>
                         <h4 className="text-xs font-bold">Salida Limpia (Kill Fee)</h4>
-                        <p className="text-[11px] opacity-75">Retención justa si el cliente cancela sin causa justificada</p>
+                        <p className="text-[11px] opacity-75">Compensación justa si el cliente cancela unilateralmente</p>
                       </div>
-                      <span className="px-3 py-1 bg-amber-500/10 text-amber-500 font-bold rounded-lg text-xs font-mono">50% retenido</span>
+                      <select
+                        value={store.governance.killFeePercentage}
+                        onChange={(e) => store.updateGovernance({ killFeePercentage: parseInt(e.target.value) })}
+                        className="px-3 py-1.5 rounded-lg border text-xs bg-black/10 dark:bg-white/10 font-bold focus:outline-none font-mono text-amber-500"
+                      >
+                        <option value={30}>30% retenido</option>
+                        <option value={50}>50% retenido (Estándar)</option>
+                        <option value={70}>70% retenido</option>
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -925,7 +1214,7 @@ export default function App() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => setIsSignModalOpen(true)}
+                    onClick={openSignatureModal}
                     className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs font-bold shadow-lg shadow-emerald-500/25 transition-all hover:scale-105 animate-pulse"
                   >
                     <FileSignature className="w-4 h-4" />
@@ -1017,18 +1306,18 @@ export default function App() {
                     <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
                       <span className="text-[10px] font-bold text-amber-600 uppercase font-mono tracking-wider">3. ¿Cuánto y cómo se paga?</span>
                       <h4 className="text-base font-bold text-slate-900 mt-1">
-                        ${(store.payments.totalAmountCents / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}
+                        {currencySymbol}{(store.payments.totalAmountCents / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}
                       </h4>
                       <p className="text-xs text-slate-600 mt-1">
-                        50% al arrancar (${((store.payments.totalAmountCents * 0.5) / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })}) y 50% al entregar el proyecto final.
+                        Dividido en {store.payments.milestones.length} hito(s) de pago vinculantes.
                       </p>
                     </div>
 
                     {/* Box 4: Cambios */}
                     <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
                       <span className="text-[10px] font-bold text-indigo-600 uppercase font-mono tracking-wider">4. ¿Y si necesitas cambios?</span>
-                      <h4 className="text-sm font-bold text-slate-900 mt-1">2 Rondas de Ajustes Incluidas</h4>
-                      <p className="text-xs text-slate-600 mt-1">Tienes 5 días para revisar cada hito; ajustes extra se cotizan aparte.</p>
+                      <h4 className="text-sm font-bold text-slate-900 mt-1">{store.governance.includedRevisionRounds} Rondas de Ajustes Incluidas</h4>
+                      <p className="text-xs text-slate-600 mt-1">Tienes {store.governance.tacitApprovalWindowDays} días hábiles para revisar cada hito; ajustes extra se cotizan aparte.</p>
                     </div>
                   </div>
 
@@ -1038,7 +1327,7 @@ export default function App() {
                     <div>
                       <h4 className="text-xs font-bold text-emerald-950">Garantía Bilateral de Propiedad Intelectual</h4>
                       <p className="text-xs text-emerald-900 mt-0.5 leading-relaxed">
-                        Los archivos y derechos son tuyos en cuanto se liquide el 100% del pago pactado. Ambas partes protegidas sin ambigüedades.
+                        Los archivos y derechos son tuyos en cuanto se liquide el 100% del pago pactado. Ambas partes protegidas sin ambigüedades conforme al Art. 83 LFDA.
                       </p>
                     </div>
                   </div>
@@ -1069,7 +1358,7 @@ export default function App() {
                     <div className="p-3 rounded-lg border border-transparent hover:border-blue-200 transition-colors">
                       <h4 className="font-bold text-xs font-sans text-slate-900">SEGUNDA. CONTRAPRESTACIÓN Y CONDICIÓN DE PAGO</h4>
                       <p className="text-xs mt-1 text-slate-700">
-                        El Cliente pagará la cantidad total de <strong>${(store.payments.totalAmountCents / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}</strong> distribuida en dos exhibiciones al 50% cada una.
+                        El Cliente pagará la cantidad total de <strong>{currencySymbol}{(store.payments.totalAmountCents / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}</strong> distribuida en los hitos pactados.
                       </p>
                     </div>
 
@@ -1082,7 +1371,7 @@ export default function App() {
 
                     <div className="p-3 rounded-lg border border-transparent hover:border-blue-200 transition-colors">
                       <h4 className="font-bold text-xs font-sans text-slate-900">CUARTA. APROBACIÓN TÁCITA POR SILENCIO</h4>
-                      <p className="text-xs mt-1 text-slate-700">El Cliente contará con un plazo de <strong>5 (cinco) días hábiles</strong> posteriores a cada entrega para formular observaciones fundamentadas; fenecido dicho plazo sin notificación, se tendrá por tácitamente aprobado el hito.</p>
+                      <p className="text-xs mt-1 text-slate-700">El Cliente contará con un plazo de <strong>{store.governance.tacitApprovalWindowDays} días hábiles</strong> posteriores a cada entrega para formular observaciones fundamentadas; fenecido dicho plazo sin notificación, se tendrá por tácitamente aprobado el hito.</p>
                     </div>
                   </section>
 
@@ -1111,7 +1400,7 @@ export default function App() {
                 <Sliders className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-amber-500">Modo Simulador: Vista del Cliente (NovaTech)</h3>
+                <h3 className="font-bold text-sm text-amber-500">Modo Simulador: Vista del Cliente ({store.parties.client.commercialName || store.parties.client.legalName})</h3>
                 <p className="opacity-80 mt-0.5">Así es como tu cliente recibe, lee y aprueba tu propuesta sin necesidad de registrarse.</p>
               </div>
             </div>
@@ -1126,7 +1415,7 @@ export default function App() {
               </button>
 
               <button
-                onClick={() => setIsSignModalOpen(true)}
+                onClick={openSignatureModal}
                 className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all flex items-center gap-1.5"
               >
                 <FileSignature className="w-3.5 h-3.5" />
@@ -1137,7 +1426,7 @@ export default function App() {
 
           {/* The Client Sheet */}
           <div className={`w-full max-w-[800px] p-8 lg:p-12 rounded-2xl transition-all duration-300 print-document ${paperClasses}`}>
-            {/* Same Paper Preview rendered from store */}
+            {/* Paper Preview rendered from store */}
             <div className="border-b border-slate-200 pb-6 mb-6 flex items-start justify-between">
               <div>
                 <span className="text-[11px] font-mono tracking-widest text-slate-500 uppercase block mb-1">
@@ -1161,22 +1450,22 @@ export default function App() {
                 <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-[10px] font-bold text-blue-600 uppercase font-mono tracking-wider">Inversión Total</span>
                   <h4 className="text-lg font-bold text-slate-900 mt-1">
-                    ${(store.payments.totalAmountCents / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}
+                    {currencySymbol}{(store.payments.totalAmountCents / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}
                   </h4>
-                  <p className="text-xs text-slate-600 mt-1">Dividido en 50% de anticipo y 50% al entregar el proyecto final.</p>
+                  <p className="text-xs text-slate-600 mt-1">Dividido en {store.payments.milestones.length} hito(s) de pago con entregables vinculados.</p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-[10px] font-bold text-emerald-600 uppercase font-mono tracking-wider">Garantía de Entrega</span>
                   <h4 className="text-base font-bold text-slate-900 mt-1">30 días naturales</h4>
-                  <p className="text-xs text-slate-600 mt-1">Incluye 2 rondas completas de ajustes sobre los entregables acordados.</p>
+                  <p className="text-xs text-slate-600 mt-1">Incluye {store.governance.includedRevisionRounds} rondas completas de ajustes sobre los entregables acordados.</p>
                 </div>
               </div>
 
               <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 space-y-1">
                 <div className="flex items-center gap-2 font-bold text-emerald-800">
                   <Lock className="w-4 h-4" />
-                  <span>Certeza Jurídica para Ambas Partes</span>
+                  <span>Certeza Jurídica para Ambas Partes (Art. 83 LFDA)</span>
                 </div>
                 <p>Al firmar este acuerdo, el creador garantiza la entrega de los archivos finales y tú garantizas la titularidad patrimonial libre de gravamen una vez liquidado el finiquito.</p>
               </div>
@@ -1189,7 +1478,7 @@ export default function App() {
                   Proponer ajuste en días o entregables
                 </button>
                 <button
-                  onClick={() => setIsSignModalOpen(true)}
+                  onClick={openSignatureModal}
                   className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md"
                 >
                   Firmar y Validar Acuerdo
@@ -1213,16 +1502,31 @@ export default function App() {
               <p className="text-xs opacity-75 mt-1">Historial inmutable de contratos, constancias NOM-151 y renovación en 1 clic.</p>
             </div>
 
-            {/* Instant Search O(1) */}
-            <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 opacity-50 absolute left-3.5 top-3" />
-              <input
-                type="text"
-                placeholder="Buscar por clave PACT-XXXXX o cliente..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={`${inputClass} pl-10 text-xs`}
-              />
+            <div className="flex items-center gap-3">
+              {/* Create new contract button */}
+              <button
+                onClick={() => {
+                  store.resetContract();
+                  setActiveTab('creator');
+                  setCurrentStep(1);
+                }}
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Nuevo Contrato en Blanco</span>
+              </button>
+
+              {/* Instant Search O(1) */}
+              <div className="relative w-full md:w-64">
+                <Search className="w-4 h-4 opacity-50 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Buscar por clave o cliente..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`${inputClass} pl-10 text-xs`}
+                />
+              </div>
             </div>
           </div>
 
@@ -1247,10 +1551,13 @@ export default function App() {
 
               <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800 text-xs">
                 <span className="font-mono font-bold">
-                  ${(store.payments.totalAmountCents / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}
+                  {currencySymbol}{(store.payments.totalAmountCents / 100).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {store.payments.currency}
                 </span>
                 <button
-                  onClick={() => setActiveTab('creator')}
+                  onClick={() => {
+                    setActiveTab('creator');
+                    setCurrentStep(1);
+                  }}
                   className="text-xs font-bold text-blue-500 hover:underline flex items-center gap-1"
                 >
                   <span>Editar</span>
@@ -1307,6 +1614,7 @@ export default function App() {
                 <span className="font-mono font-bold">$28,000.00 MXN</span>
                 <button
                   onClick={() => {
+                    store.resetContract(`PACT-RENEW-${Math.random().toString(36).substring(2, 6).toUpperCase()}`);
                     store.updateScope({ projectTitle: 'Renovación: Mantenimiento de Design System Trimestre 2' });
                     setActiveTab('creator');
                     setCurrentStep(1);
@@ -1395,10 +1703,22 @@ export default function App() {
             </button>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-2 flex items-center gap-4 text-xs font-bold">
+            <button
+              onClick={() => {
+                store.resetContract();
+                setActiveTab('creator');
+                setCurrentStep(1);
+              }}
+              className="text-slate-400 hover:text-white flex items-center gap-1"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Crear Otro Contrato</span>
+            </button>
+            <span className="opacity-30">|</span>
             <button
               onClick={() => setActiveTab('vault')}
-              className="text-xs text-blue-500 font-bold hover:underline flex items-center gap-1"
+              className="text-blue-500 hover:underline flex items-center gap-1"
             >
               <span>Ir a la Bóveda de Contratos</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -1448,7 +1768,7 @@ export default function App() {
                     />
                     <span className="font-mono font-bold text-base">{adjustedDays} días</span>
                   </div>
-                  <p className="text-[11px] opacity-70">Valor original del creador: 5 días hábiles.</p>
+                  <p className="text-[11px] opacity-70">Valor original del creador: {store.governance.tacitApprovalWindowDays} días hábiles.</p>
                 </div>
 
                 {/* Visual Diff Box */}
@@ -1457,7 +1777,7 @@ export default function App() {
                     <span className="text-[10px] font-bold text-amber-500 uppercase font-mono">Diferencia Visual (Diff v1.0 ➔ v1.1):</span>
                     <div className="text-[11px] font-mono space-y-1">
                       <p className="line-through text-red-500 bg-red-500/10 p-1 rounded">
-                        - Cláusula 4: Plazo de revisión de 5 días hábiles.
+                        - Cláusula 4: Plazo de revisión de {store.governance.tacitApprovalWindowDays} días hábiles.
                       </p>
                       <p className="text-emerald-500 bg-emerald-500/10 p-1 rounded font-bold">
                         + Cláusula 4: Plazo de revisión de {adjustedDays} días hábiles.
@@ -1499,7 +1819,7 @@ export default function App() {
       )}
 
       {/* =========================================================================
-          SIGNATURE MODAL & NOM-151 STAMPING ENGINE (STRICT VALIDATION)
+          SIGNATURE MODAL & NOM-151 STAMPING ENGINE (FIXED: NEVER OPENS EMPTY)
       ========================================================================== */}
       {isSignModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
@@ -1515,8 +1835,8 @@ export default function App() {
               </button>
             </div>
 
-            {/* Signature Tabs (Touch vs Typed Script vs e.firma) */}
-            {!isStamping && !stampedSuccess && (
+            {/* Signature Tabs (Touch vs Typed Script vs e.firma) - Always visible if not stamping */}
+            {!isStamping && (
               <div className="space-y-4">
                 <div className={`grid grid-cols-3 gap-1.5 p-1 rounded-xl text-xs border ${pillClass}`}>
                   <button

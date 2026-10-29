@@ -5,12 +5,13 @@ import type { ContractData } from '../schemas/contract.js';
  * Convierte un importe en centavos a texto formal monetario.
  * ej. 3000000 -> "$30,000.00 MXN"
  */
-export function formatCurrencyAmount(cents: number, currency: 'MXN' | 'USD' = 'MXN'): string {
-  const units = (cents / 100).toLocaleString('es-MX', {
+export function formatCurrencyAmount(cents: number, currency: 'MXN' | 'USD' | 'EUR' = 'MXN'): string {
+  const symbol = currency === 'EUR' ? '€' : '$';
+  const units = (cents / 100).toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
-  return `$${units} ${currency}`;
+  return `${symbol}${units} ${currency}`;
 }
 
 /**

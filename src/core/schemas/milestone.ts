@@ -34,7 +34,7 @@ export const MilestoneSchema = z.object({
  * Esquema exhaustivo del Plan de Pagos e Invariantes Financieras.
  */
 export const PaymentPlanSchema = z.object({
-  currency: z.enum(['MXN', 'USD']).default('MXN'),
+  currency: z.enum(['MXN', 'USD', 'EUR']).default('MXN'),
   totalAmountCents: z.number().int().positive('El monto total debe ser mayor a cero centavos'),
   model: z.enum(['milestones', 'fixed_50_50', 'full_advance', 'custom']).default('milestones'),
   milestones: z.array(MilestoneSchema).min(1, 'Debe especificarse al menos un hito de pago'),

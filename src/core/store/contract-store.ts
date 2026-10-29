@@ -54,6 +54,9 @@ export interface ContractStoreState {
   updateGovernance: (patch: Partial<Governance>) => void;
   recompilePreview: () => void;
   setAutosaveStatus: (status: AutosaveStatus) => void;
+  applyPaymentPreset: (preset: 'fixed_50_50' | 'milestones_3' | 'full_advance') => void;
+  resetContract: (newCode?: string) => void;
+  loadContract: (patch: Partial<ContractStoreState>) => void;
   toContractData: () => ContractData;
 }
 
@@ -377,6 +380,121 @@ export const useContractStore = create<ContractStoreState>((set, get) => {
     },
 
     setAutosaveStatus: (status) => set({ autosaveStatus: status }),
+
+    applyPaymentPreset: (preset) => {
+      set((state) => {
+        const total = state.payments.totalAmountCents;
+        let newMilestones: Milestone[] = [];
+        if (preset === 'fixed_50_50') {
+          const h1 = Math.round(total * 0.5);
+          newMilestones = [
+            {
+              id: `m1-${Date.now()}`,
+              order: 1,
+              title: 'Anticipo de Inicio (50%)',
+              percentage: 50,
+              amountCents: h1,
+              deliverables: ['Kick-off y recepción de insumos', 'Definición de arquitectura'],
+              status: 'pending'
+            },
+            {
+              id: `m2-${Date.now() + 1}`,
+              order: 2,
+              title: 'Finiquito contra Entrega Final (50%)',
+              percentage: 50,
+              amountCents: total - h1,
+              deliverables: ['Entrega de prototipo navegable', 'Handoff de archivos editables'],
+              status: 'pending'
+            }
+          ];
+        } else if (preset === 'milestones_3') {
+          const h1 = Math.round(total * 0.3);
+          const h2 = Math.round(total * 0.4);
+          newMilestones = [
+            {
+              id: `m1-${Date.now()}`,
+              order: 1,
+              title: 'Anticipo de Arranque & Setup (30%)',
+              percentage: 30,
+              amountCents: h1,
+              deliverables: ['Recepción de accesos', 'Benchmarking e investigación'],
+              status: 'pending'
+            },
+            {
+              id: `m2-${Date.now() + 1}`,
+              order: 2,
+              title: 'Entrega Intermedia: Wireframes & Flujos (40%)',
+              percentage: 40,
+              amountCents: h2,
+              deliverables: ['Wireframes en media fidelidad', 'Validación de flujos principales'],
+              status: 'pending'
+            },
+            {
+              id: `m3-${Date.now() + 2}`,
+              order: 3,
+              title: 'Finiquito: UI Kit & Prototipo Final (30%)',
+              percentage: 30,
+              amountCents: total - h1 - h2,
+              deliverables: ['Design tokens en Figma', 'Prototipo interactivo en alta fidelidad'],
+              status: 'pending'
+            }
+          ];
+        } else if (preset === 'full_advance') {
+          newMilestones = [
+            {
+              id: `m1-${Date.now()}`,
+              order: 1,
+              title: 'Liquidación 100% Previa al Inicio (Express)',
+              percentage: 100,
+              amountCents: total,
+              deliverables: ['Entrega integral en sprint prioritario de 7 días'],
+              status: 'pending'
+            }
+          ];
+        }
+
+        const nextPayments = {
+          ...state.payments,
+          model: preset === 'fixed_50_50' ? 'fixed_50_50' as const : preset === 'full_advance' ? 'full_advance' as const : 'milestones' as const,
+          milestones: newMilestones
+        };
+        const nextState = { ...state, payments: nextPayments };
+        return {
+          payments: nextPayments,
+          ...computeCompiledData(nextState)
+        };
+      });
+    },
+
+    resetContract: (newCode) => {
+      set((state) => {
+        const nextState = {
+          ...state,
+          contractCode: newCode || `PACT-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          status: 'DRAFT' as const,
+          versionMajor: 1,
+          versionMinor: 0,
+          scope: { ...defaultScope },
+          payments: { ...defaultPayments },
+          intellectualProperty: { ...defaultIP },
+          governance: { ...defaultGovernance }
+        };
+        return {
+          ...nextState,
+          ...computeCompiledData(nextState)
+        };
+      });
+    },
+
+    loadContract: (patch) => {
+      set((state) => {
+        const nextState = { ...state, ...patch };
+        return {
+          ...nextState,
+          ...computeCompiledData(nextState)
+        };
+      });
+    },
 
     toContractData: () => {
       const state = get();
