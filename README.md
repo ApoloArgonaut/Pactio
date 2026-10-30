@@ -20,7 +20,7 @@
 5. [Arquitectura de Software & Ciberseguridad](#-arquitectura-de-software--ciberseguridad)
 6. [Catálogo de Documentación Ejecutiva (.md, .docx, .pdf)](#-catálogo-de-documentación-ejecutiva)
 7. [Guía de Instalación y Despliegue Rápido](#-guía-de-instalación-y-despliegue-rápido)
-8. [Auditorías y Verificación de Calidad](#-auditorías-y-verificación-de-calidad)
+8. [¿Cómo aseguramos que Pactio sea confiable? (Calidad y Pruebas)](#-cómo-aseguramos-que-pactio-sea-confiable-calidad-y-pruebas)
 
 ---
 
@@ -249,17 +249,35 @@ npx vite build
 
 ---
 
-## 📊 Auditorías y Verificación de Calidad
+## 🛡️ ¿Cómo aseguramos que Pactio sea confiable? (Calidad y Pruebas)
 
-Pactio cuenta con una suite integral de **159 pruebas automatizadas** que cubren:
+Para que tanto tú como tus clientes puedan tener total tranquilidad de que un contrato es válido, blindado y que el dinero no se perderá en un malentendido o error de cálculo, Pactio pasa por **159 pruebas de calidad automáticas**.
 
-1. **Esquemas Zod:** Validación estricta de RFCs mexicanos (personas físicas y morales), direcciones, montos, hitos y fechas.
-2. **Sanitización XSS:** Neutralización de inyecciones maliciosas en títulos, cláusulas y campos de texto abierto.
-3. **Compilador Dual:** Consistencia estricta entre la vista humana y la vista jurídica canónica.
-4. **FSM (Máquina de Estados):** Transiciones válidas e invalidación de estados no permitidos.
-5. **Criptografía NanoID & SHA-256:** Uniformidad estadística de entropía y detección de manipulación de caracteres (*Tampering detection*).
-6. **Tokens Magic Link HMAC-SHA256:** Resistencia contra firmas alteradas, caducidad de tokens y revocación en cascada.
-7. **e.firma SAT Zero-Knowledge:** Validación de que ninguna contraseña ni llave privada no cifrada sea expuesta o transmitida.
+En palabras sencillas y sin tecnicismos complicados, esto es lo que cuidamos en cada rincón de la plataforma:
+
+* 🎯 **Cuentas claras y sin errores de dedo:**
+  El sistema revisa al instante que los datos de ambas partes (como el RFC en México), correos y fechas estén completos. Además, calcula los anticipos, pagos intermedios y finiquitos de manera automática para que jamás envíes una cotización con sumas chuecas o porcentajes que no cuadren al 100%.
+
+* 🤝 **Lo que lees en sencillo dice exactamente lo mismo que lo legal:**
+  Pactio cuenta con dos vistas: la **Humana** (para entender todo en español claro, con peras y manzanas) y la **Jurídica** (el contrato formal con artículos de ley). Nuestro sistema comprueba de forma automática que ambas versiones digan exactamente lo mismo, sin trampas, contradicciones ni letras chiquitas.
+
+* 🚫 **Protección contra alteraciones o textos dañinos:**
+  Todo lo que escribes en el título del proyecto o en la lista de entregables pasa por un filtro de seguridad para evitar que personas malintencionadas puedan inyectar códigos raros o alterar lo que ya se había acordado.
+
+* 🚦 **Flujos a prueba de confusiones y pasos saltados:**
+  Nadie puede firmar un contrato que ya fue cancelado, ni timbrar un documento que todavía está en borrador. El sistema actúa como un semáforo inteligente que vigila que cada etapa (crear → revisar → negociar → firmar → timbrar) ocurra en su momento exacto.
+
+* 🔐 **Sellos digitales que no se pueden falsificar:**
+  Cada acuerdo recibe una huella digital única (como una firma microscópica e irrepetible del archivo). Si alguien intentara cambiar tan solo un punto o una coma después de firmado, la aplicación lo detecta de inmediato y avisa que el documento fue alterado.
+
+* 📬 **Enlaces privados y seguros para compartir con tus clientes:**
+  Cuando le mandas el enlace a tu cliente para que revise o firme el acuerdo, ese acceso es privado, vence a los pocos días y solo funciona para esa persona, evitando que curiosos o terceros puedan ver la información de tu proyecto.
+
+* 🔒 **Tus contraseñas y llaves del SAT se quedan en tu dispositivo:**
+  Si firmas usando tu e.firma del SAT, el archivo y tu clave se procesan exclusivamente dentro de tu navegador (en tu propia computadora o teléfono). **Nunca viajan por internet ni se guardan en ningún servidor externo**. Tu privacidad fiscal está 100% protegida.
+
+> 💡 **Nota para equipos de desarrollo y auditoría técnica:**  
+> Estas garantías se ejecutan mediante **Vitest** con 159 suites de pruebas unitarias y de integración (esquemas estrictos con Zod, sanitización contra inyección XSS, máquina de estados finitos FSM de 11 fases, generador NanoID criptográfico CSPRNG y operaciones WebCrypto Zero-Knowledge). Puedes ejecutar la suite completa en tu terminal con `npm test`.
 
 ---
 
