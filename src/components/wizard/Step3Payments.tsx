@@ -3,13 +3,15 @@ import { DollarSign, HelpCircle, Plus, Trash2, CheckCircle2, AlertTriangle, Refr
 import { ThemeMode, ThemeStyles } from '../../types/theme';
 import { Milestone } from '../../core/schemas/milestone';
 
+import { PaymentPreset } from '../../core/store/contract-store';
+
 interface Step3PaymentsProps {
   totalAmountCents: number;
   currency: 'MXN' | 'USD' | 'EUR';
   currencySymbol: string;
   milestones: Milestone[];
   onUpdatePayments: (patch: { currency?: 'MXN' | 'USD' | 'EUR'; totalAmountCents?: number }) => void;
-  onApplyPaymentPreset: (preset: 'fixed_50_50' | 'milestones_30_40_30' | 'full_upfront') => void;
+  onApplyPaymentPreset: (preset: PaymentPreset) => void;
   onUpdateMilestone: (id: string, patch: Partial<Milestone>) => void;
   onAddMilestone: () => void;
   onDeleteMilestone: (id: string) => void;

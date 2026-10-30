@@ -13,7 +13,8 @@ import {
 } from '../compiler/dual-compiler.js';
 
 export type PreviewMode = 'human' | 'legal';
-export type AutosaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+export type AutosaveStatus = 'idle' | 'saving' | 'saved' | 'error' | 'synced';
+export type PaymentPreset = 'fixed_50_50' | 'milestones_3' | 'milestones_30_40_30' | 'full_advance' | 'full_upfront';
 
 export interface ContractStoreState {
   // Identificación y Estado
@@ -53,8 +54,9 @@ export interface ContractStoreState {
   updateIP: (patch: Partial<IntellectualProperty>) => void;
   updateGovernance: (patch: Partial<Governance>) => void;
   recompilePreview: () => void;
+  updateStatus: (status: ContractStatus) => void;
   setAutosaveStatus: (status: AutosaveStatus) => void;
-  applyPaymentPreset: (preset: 'fixed_50_50' | 'milestones_3' | 'full_advance') => void;
+  applyPaymentPreset: (preset: PaymentPreset) => void;
   resetContract: (newCode?: string) => void;
   loadContract: (patch: Partial<ContractStoreState>) => void;
   toContractData: () => ContractData;
@@ -379,6 +381,11 @@ export const useContractStore = create<ContractStoreState>((set, get) => {
       set((state) => ({ ...computeCompiledData(state) }));
     },
 
+    updateStatus: (newStatus) => {
+      set({ status: newStatus });
+      get().recompilePreview();
+    },
+
     setAutosaveStatus: (status) => set({ autosaveStatus: status }),
 
     applyPaymentPreset: (preset) => {
@@ -407,7 +414,7 @@ export const useContractStore = create<ContractStoreState>((set, get) => {
               status: 'pending'
             }
           ];
-        } else if (preset === 'milestones_3') {
+        } else if (preset === 'milestones_3' || preset === 'milestones_30_40_30') {
           const h1 = Math.round(total * 0.3);
           const h2 = Math.round(total * 0.4);
           newMilestones = [
@@ -439,7 +446,7 @@ export const useContractStore = create<ContractStoreState>((set, get) => {
               status: 'pending'
             }
           ];
-        } else if (preset === 'full_advance') {
+        } else if (preset === 'full_advance' || preset === 'full_upfront') {
           newMilestones = [
             {
               id: `m1-${Date.now()}`,
@@ -455,7 +462,7 @@ export const useContractStore = create<ContractStoreState>((set, get) => {
 
         const nextPayments = {
           ...state.payments,
-          model: preset === 'fixed_50_50' ? 'fixed_50_50' as const : preset === 'full_advance' ? 'full_advance' as const : 'milestones' as const,
+          model: preset === 'fixed_50_50' ? 'fixed_50_50' as const : (preset === 'full_advance' || preset === 'full_upfront') ? 'full_advance' as const : 'milestones' as const,
           milestones: newMilestones
         };
         const nextState = { ...state, payments: nextPayments };

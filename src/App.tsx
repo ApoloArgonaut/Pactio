@@ -217,7 +217,7 @@ export default function App() {
               onApplyPaymentPreset={store.applyPaymentPreset}
               onUpdateMilestone={store.updateMilestone}
               onAddMilestone={handleAddMilestone}
-              onDeleteMilestone={store.deleteMilestone}
+              onDeleteMilestone={store.removeMilestone}
               onAutoBalanceMilestones={handleAutoBalanceMilestones}
               intellectualProperty={store.intellectualProperty}
               onUpdateIP={store.updateIP}

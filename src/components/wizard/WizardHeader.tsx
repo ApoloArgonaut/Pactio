@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight, FileSignature, Check } from 'lucide-react';
 import { ThemeStyles } from '../../types/theme';
+import { AutosaveStatus } from '../../core/store/contract-store';
 
 interface WizardHeaderProps {
   currentStep: number;
@@ -8,7 +9,7 @@ interface WizardHeaderProps {
   onPrevStep: () => void;
   onNextStep: () => void;
   onProceedToSign: () => void;
-  autosaveStatus: 'saved' | 'saving' | 'synced';
+  autosaveStatus: AutosaveStatus;
   styles: ThemeStyles;
 }
 

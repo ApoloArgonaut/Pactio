@@ -13,12 +13,14 @@ import { Milestone } from '../../core/schemas/milestone';
 import { IntellectualProperty } from '../../core/schemas/intellectual-property';
 import { Governance } from '../../core/schemas/governance';
 
+import { AutosaveStatus, PaymentPreset } from '../../core/store/contract-store';
+
 interface WizardStepContainerProps {
   currentStep: number;
   onPrevStep: () => void;
   onNextStep: () => void;
   onProceedToSign: () => void;
-  autosaveStatus: 'saved' | 'saving' | 'synced';
+  autosaveStatus: AutosaveStatus;
   // State slices
   creator: Party;
   client: Party;
@@ -31,7 +33,7 @@ interface WizardStepContainerProps {
   currencySymbol: string;
   milestones: Milestone[];
   onUpdatePayments: (patch: { currency?: 'MXN' | 'USD' | 'EUR'; totalAmountCents?: number }) => void;
-  onApplyPaymentPreset: (preset: 'fixed_50_50' | 'milestones_30_40_30' | 'full_upfront') => void;
+  onApplyPaymentPreset: (preset: PaymentPreset) => void;
   onUpdateMilestone: (id: string, patch: Partial<Milestone>) => void;
   onAddMilestone: () => void;
   onDeleteMilestone: (id: string) => void;
