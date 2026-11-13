@@ -45,6 +45,21 @@ El **68% de los diseñadores, desarrolladores y creadores independientes** en LA
 
 ---
 
+### 📊 Resultados de las pruebas de usabilidad
+
+Estudio con **8 participantes** en dos cohortes, tareas moderadas y medición estandarizada:
+
+| Métrica | Resultado | Referencia |
+|---|---|---|
+| **System Usability Scale (SUS)** | **87.8 / 100** | Grado A+, percentil 96 |
+| **Tasa de éxito en tareas** | **95.8%** (23 de 24) | Objetivo > 85% |
+| **Tiempo medio para crear un acuerdo** | **3 min 42 s** | Objetivo < 5 min |
+| **Hallazgos de auditoría implementados** | **12+ en 48 horas** | Ciclo de una semana |
+
+**Dato de decisión:** convertir la firma en un acto de dos pasos con «Solicitar ajuste» visible redujo el abandono del flujo. Antes, cada objeción del cliente reiniciaba la conversación desde cero.
+
+---
+
 ## 🇺🇸 English Version
 
 ### 💡 What is Pactio?
@@ -58,6 +73,21 @@ Over **68% of digital freelancers and boutique agencies in Latin America** face 
 3. **Client Negotiation Simulator:** Enables clients to review milestones, request reasonable adjustments, and approve terms with zero friction.
 4. **Zero-Knowledge Digital Signature & NOM-151:** Sign via touch canvas, cursive typography, or official Mexican **e.firma SAT** (computed in-browser via WebCrypto; private keys never leave your machine).
 5. **WCAG 2.1 AAA Ergonomics:** Tailored themes (*Midnight Dark*, *Warm Paper*, *High Contrast*) ensuring accessible contrast and smooth reading.
+
+---
+
+### 📊 Usability testing results
+
+Study with **8 participants** across two cohorts, moderated tasks, standardised scoring:
+
+| Metric | Result | Benchmark |
+|---|---|---|
+| **System Usability Scale (SUS)** | **87.8 / 100** | Grade A+, 96th percentile |
+| **Task success rate** | **95.8%** (23 of 24) | Target > 85% |
+| **Median time to create an agreement** | **3 min 42 s** | Target < 5 min |
+| **Audit findings shipped** | **12+ within 48 hours** | One-week cycle |
+
+**Key design decision:** turning signature into a two-step act with a visible *Request changes* button cut flow abandonment. Before it, every client objection restarted the conversation from scratch.
 
 ---
 
@@ -114,6 +144,6 @@ Para conocer el análisis a fondo, especificaciones de arquitectura, diseño UX 
 
 ## 👤 Autor & Contacto / Author & Contact
 
-* **Líder de Proyecto & Product Designer:** [Apolo Argonaut](https://github.com/ApoloArgonaut)
+* **Diseño de producto, UX/UI y CX:** Ezra Gonzalez — [LinkedIn](https://www.linkedin.com/in/ezra-gonzalez-studio) · [GitHub](https://github.com/ApoloArgonaut)
 * **Repositorio Oficial:** [https://github.com/ApoloArgonaut/Pactio](https://github.com/ApoloArgonaut/Pactio)
 * **Licencia:** Software de uso privado / Portafolio profesional.
