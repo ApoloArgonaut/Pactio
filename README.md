@@ -207,8 +207,8 @@ La carpeta [`docs/`](file:///root/UX%20Project/Pactio/docs/) incluye la especifi
 
 ### 1. Clonar el Repositorio
 ```bash
-git clone https://github.com/ApoloArgonaut/UX-UI-CX-repo.git
-cd UX-UI-CX-repo
+git clone https://github.com/ApoloArgonaut/Pactio.git
+cd Pactio
 ```
 
 ### 2. Instalar Dependencias
@@ -291,5 +291,5 @@ El proyecto incluye el paquete empaquetado y listo para distribución:
 ## 👤 Autor & Contacto
 
 * **Líder de Proyecto & Product Designer:** [Apolo Argonaut](https://github.com/ApoloArgonaut)
-* **Repositorio en GitHub:** [https://github.com/ApoloArgonaut/UX-UI-CX-repo](https://github.com/ApoloArgonaut/UX-UI-CX-repo)
+* **Repositorio en GitHub:** [https://github.com/ApoloArgonaut/Pactio](https://github.com/ApoloArgonaut/Pactio)
 * **Licencia:** Software de uso privado / Demostración de portafolio para presentación profesional y de inversión.
