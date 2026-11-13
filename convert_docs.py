@@ -3,7 +3,8 @@ import os
 import glob
 import subprocess
 
-docs_dir = "/root/UX Project/Pactio/docs"
+base_dir = os.path.dirname(os.path.abspath(__file__))
+docs_dir = os.path.join(base_dir, "docs")
 docx_dir = os.path.join(docs_dir, "docx")
 pdf_dir = os.path.join(docs_dir, "pdf")
 css_file = os.path.join(docs_dir, "pdf_style.css")

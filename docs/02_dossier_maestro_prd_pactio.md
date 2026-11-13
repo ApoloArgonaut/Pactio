@@ -564,11 +564,11 @@ async function cloneAndRenewContract(originalContractId: string, userId: string)
 
 Para profundizar en el diseño visual, las heurísticas y las pruebas periciales de Pactio, consulte los documentos complementarios:
 
-* 📄 [**01. Caso de Estudio Ejecutivo (Nivel 1 - The Portfolio Showcase)**](file:///root/UX%20Project/Pactio/docs/01_caso_de_estudio_ejecutivo_pactio.md)
-* 🎨 [**03. Especificación de Diseño UX/UI & CX Bilateral (Nivel 3)**](file:///root/UX%20Project/Pactio/docs/pactio_ux_ui_cx_design_specification.md)
-* ⚙️ [**04. Dictamen de Viabilidad Técnica y Auditoría de Arquitectura (Nivel 3)**](file:///root/UX%20Project/Pactio/docs/FEASIBILITY_AUDIT.md)
-* 🔬 [**05. Deep Dive: Plan Integral de Testing, QA y Usability Research (Nivel 3)**](file:///root/UX%20Project/Pactio/docs/deep_dive_research_y_testing.md)
-* ⚖️ [**06. Repositorio de Auditorías Previas y Dictamen Regulatorio LATAM**](file:///root/.gemini/antigravity-cli/brain/53114f8d-8993-4d58-8470-3b2e2bf19594/audits/)
+* 📄 [**01. Caso de Estudio Ejecutivo (Nivel 1 - The Portfolio Showcase)**](01_caso_de_estudio_ejecutivo_pactio.md)
+* 🎨 [**03. Especificación de Diseño UX/UI & CX Bilateral (Nivel 3)**](pactio_ux_ui_cx_design_specification.md)
+* ⚙️ [**04. Dictamen de Viabilidad Técnica y Auditoría de Arquitectura (Nivel 3)**](FEASIBILITY_AUDIT.md)
+* 🔬 [**05. Deep Dive: Plan Integral de Testing, QA y Usability Research (Nivel 3)**](deep_dive_research_y_testing.md)
+* ⚖️ [**06. Repositorio de Auditorías Previas y Dictamen Regulatorio LATAM**](audits/)
 
 ---
 *Fin del Dossier Maestro PRD Canónico v2.0 de Pactio.*

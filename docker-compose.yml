@@ -1,0 +1,11 @@
+services:
+  pactio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pactio-app
+    ports:
+      - "3001:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production

@@ -1,0 +1,12 @@
+node_modules
+.git
+.github
+dist
+coverage
+.next
+*.tsbuildinfo
+*.log
+.DS_Store
+.env*
+!.env.example
+pactio_complete_project.zip

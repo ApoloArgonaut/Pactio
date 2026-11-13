@@ -4,7 +4,7 @@
 > **Rol:** Lead Visual Designer & Wireframe Architect  
 > **Destinatarios:** PM, Fullstack Engineering, Frontend Specialists, LegalTech & Quality Assurance  
 > **Estándares:** WCAG 2.1 AAA, Legal Design (Margaret Hagan / Stanford), Apple HIG, Material Design 3, NOM-151-SCFI-2016  
-> **Tokens Vinculados:** [`figma_design_tokens.json`](file:///root/UX%20Project/Pactio/docs/figma_design_tokens.json)
+> **Tokens Vinculados:** [`figma_design_tokens.json`](figma_design_tokens.json)
 
 ---
 
@@ -854,7 +854,7 @@ El drawer lateral derecho `[Solicitar Ajuste]` aplica una estricta **Matriz de G
 
 ## 6. Integración de Design Tokens y Conmutador de Temas
 
-Pactio provee tres experiencias cromáticas completas mapeadas al archivo [`figma_design_tokens.json`](file:///root/UX%20Project/Pactio/docs/figma_design_tokens.json):
+Pactio provee tres experiencias cromáticas completas mapeadas al archivo [`figma_design_tokens.json`](figma_design_tokens.json):
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -890,7 +890,7 @@ Para cumplir cabalmente con **WCAG 2.1 AAA**, toda la plataforma puede operarse 
 
 ## 8. Dictamen de Aprobación de Arquitectura Visual
 
-Este documento y sus tokens asociados en [`figma_design_tokens.json`](file:///root/UX%20Project/Pactio/docs/figma_design_tokens.json) constituyen la **guía definitiva de implementación visual y frontend** para Pactio. Se garantiza:
+Este documento y sus tokens asociados en [`figma_design_tokens.json`](figma_design_tokens.json) constituyen la **guía definitiva de implementación visual y frontend** para Pactio. Se garantiza:
 1. Simetría total en la relación creador-cliente.
 2. Cero fricción en smartphones sin registro forzado.
 3. Certeza técnica y legal conforme a la NOM-151 y Código Fiscal de la Federación.

@@ -241,7 +241,7 @@ flowchart TD
 ```
 
 #### A. Fundamento Histórico del Proyecto
-El diseño original del repositorio (evidenciado en el lienzo de Figma exportado como [`AAAAA.png`](file:///root/UX%20Project/Pactio/AAAAA.png)) concebía la creación en 5 momentos clave de descubrimiento. En lugar de dispersar la experiencia en 12 micro-formularios o agobiar al usuario en una sola página kilométrica (*single-page overload*), preservamos esta arquitectura probada y la elevamos a nivel de producción.
+El diseño original del repositorio (evidenciado en el lienzo de Figma exportado como [`AAAAA.png`](../AAAAA.png)) concebía la creación en 5 momentos clave de descubrimiento. En lugar de dispersar la experiencia en 12 micro-formularios o agobiar al usuario en una sola página kilométrica (*single-page overload*), preservamos esta arquitectura probada y la elevamos a nivel de producción.
 
 #### B. Fundamento en Psicología Cognitiva (Ley de George Miller: 7 ± 2 Chunks)
 La mente humana en tareas complejas solo puede retener entre 5 y 9 fragmentos de información en la memoria de trabajo. Un formulario legal con 25 campos continuos provoca un pico de cortisol y una tasa de rebote superior al 60%. Al agrupar el viaje en **5 módulos temáticos autocontenidos**, el usuario percibe un avance constante y alcanzable, situándose en el punto dulce de menor esfuerzo cognitivo (*cognitive sweet spot*).

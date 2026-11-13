@@ -214,19 +214,19 @@ Pactio implementa el estándar más estricto de la industria (**WCAG 2.1 Nivel A
 
 Este caso de estudio ejecutivo representa solo la superficie de la suite de producto de Pactio. Si deseas explorar la arquitectura profunda, los esquemas de bases de datos, los modelos criptográficos y los dictámenes regulatorios completos, consulta la documentación canónica:
 
-* 📘 [**02. Dossier Maestro PRD de Pactio (Nivel 2 - The Master Product Bible)**](file:///root/UX%20Project/Pactio/docs/02_dossier_maestro_prd_pactio.md)  
+* 📘 [**02. Dossier Maestro PRD de Pactio (Nivel 2 - The Master Product Bible)**](02_dossier_maestro_prd_pactio.md)  
   *Jobs-to-be-Done, Unit Economics detallados, Matriz de Marty Cagan, FSM de negociación, ciberseguridad STRIDE y gobernanza de producto.*
 
-* 🎨 [**03. Especificación de Diseño UX/UI & CX Bilateral (Nivel 3)**](file:///root/UX%20Project/Pactio/docs/pactio_ux_ui_cx_design_specification.md)  
+* 🎨 [**03. Especificación de Diseño UX/UI & CX Bilateral (Nivel 3)**](pactio_ux_ui_cx_design_specification.md)  
   *Heurísticas de Nielsen, psicología cognitiva aplicada, breakpoints de 375px a 4K, design system y tokens WCAG AAA.*
 
-* ⚙️ [**04. Dictamen de Viabilidad Técnica y Arquitectura de Sistemas (Nivel 3)**](file:///root/UX%20Project/Pactio/docs/FEASIBILITY_AUDIT.md)  
+* ⚙️ [**04. Dictamen de Viabilidad Técnica y Arquitectura de Sistemas (Nivel 3)**](FEASIBILITY_AUDIT.md)  
   *Dual Storage (JSONB + Markdown FTS), Identificación NanoID $O(1)$, WebCrypto para e.firma SAT en cliente y timbrado NOM-151.*
 
-* 🔬 [**05. Deep Dive: Plan Integral de Testing, QA y Usability Research (Nivel 3)**](file:///root/UX%20Project/Pactio/docs/deep_dive_research_y_testing.md)  
+* 🔬 [**05. Deep Dive: Plan Integral de Testing, QA y Usability Research (Nivel 3)**](deep_dive_research_y_testing.md)  
   *Protocolo de usabilidad empírica con $N=8$, guiones Think-Aloud, métricas SUS, sanitización Módulo 11 SAT y modelo STRIDE.*
 
-* ⚖️ [**06. Auditorías Previas & Dictamen Regulatorio LegalTech LATAM**](file:///root/.gemini/antigravity-cli/brain/53114f8d-8993-4d58-8470-3b2e2bf19594/audits/)  
+* ⚖️ [**06. Auditorías Previas & Dictamen Regulatorio LegalTech LATAM**](audits/)  
   *Auditoría adversarial Senior PM y dictamen jurídico de adaptación en México, Colombia, Argentina y Chile.*
 
 ---
