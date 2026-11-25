@@ -70,7 +70,7 @@ flowchart TD
 ### 2.1. Árbol Exhaustivo de Directorios del Repositorio
 
 ```bash
-/root/UX Project/Pactio/
+Pactio/
 ├── package.json                 # Dependencias: zod, zustand, react, vitest, typescript
 ├── tsconfig.json                # Configuración TypeScript estricta (ES2022, Bundler)
 ├── docs/                        # Documentación técnica y de diseño
@@ -523,7 +523,7 @@ Compilar un PDF mediante `@react-pdf/renderer` o un Worker en cada pulsación co
 La arquitectura cuenta con una suite completa de pruebas unitarias y de integración implementadas en **Vitest**, logrando **100% de éxito en ejecución**:
 
 ```bash
- RUN  v2.1.9 /root/UX Project/Pactio
+ RUN  v2.1.9 · Pactio
 
  ✓ test/core-engine.test.ts (18 pruebas)
    ✓ 1. NanoID en Crockford Base32 (PACT-XXXXX) (4 pruebas)

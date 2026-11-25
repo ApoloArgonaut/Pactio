@@ -3,7 +3,6 @@
 **Evaluador:** Tester Exploratorio e Investigador de UX (Naive / First-Time User Auditor)  
 **Fecha de Auditoría:** 29 de Octubre de 2026  
 **Entorno de Pruebas:** Linux x86_64 · Node 22 · Vite Dev Server (Port 3001) · React 19 · Vitest  
-**Documento Destino:** `/root/.gemini/antigravity-cli/brain/53114f8d-8993-4d58-8470-3b2e2bf19594/audits/naive_user_exploratory_audit.md`
 
 ---
 
